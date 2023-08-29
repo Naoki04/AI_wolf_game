@@ -41,6 +41,9 @@
     - 成功した場合
         ```
         {
-            "statusCode": 200
+            "statusCode": 200,
+            'body': json.dumps({
+                    "message": "successfully done"
+                    })
         }
         ```
