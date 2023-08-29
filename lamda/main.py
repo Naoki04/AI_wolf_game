@@ -31,14 +31,19 @@ def join_room(data):
     # レスポンスの作成
     response = {
                 'statusCode': 200,
+                'body': json.dumps({
+                    "message": "successfully done"
+                    })
                 }
     return response
     
 
 def lambda_handler(event, context):
-    # モード, データの抽出    
-    mode = event["mode"]
-    data = event["data"]
+    print(event)
+    # モード, データの抽出(bodyは辞書型ではなくstrで来るので, 辞書型に変換する)
+    body_dist = json.loads(event["body"])
+    mode = body_dist["mode"]
+    data = body_dist["data"]
     print("mode: ", mode)
     print("data: ", data)
     
