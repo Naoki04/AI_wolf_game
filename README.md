@@ -47,7 +47,24 @@ ChatGPTを用いたパーティゲームです。AIに乗っ取られた人間�
 - Hackedは投票権をもつか？
 - Hackedの最大人数は？
 - Hackedは他のHackedが誰かを知っているか？
-        
+
+---
+# システム設計
+## DynamoDB
+1. ゲーム管理DB
+ゲームID(int), タイムスタンプ, 部屋ID(int), 人数(int), メンバーid(list)
+2. ゲーム進行DB
+
+3. 質問DB\
+質問の種類ID(int), 質問id(int), 質問内容(str)
+
+## Vue.js
+## Lamda
+
+
+## 懸念事項
+- Vue.jsはどこでDeployする？
+- ユーザーの識別どうする？        
 
 ---
 # 開発情報
@@ -56,7 +73,8 @@ ChatGPTを用いたパーティゲームです。AIに乗っ取られた人間�
 
 ## 使用技術
 - Vue.js
-- AWS(DynamoDB, Lamda)
+- AWS(DynamoDB, Lamda, EC2)
+- ChatGPT API
 
 ## 開発メンバー
 - Nao: Backend
