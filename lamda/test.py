@@ -3,6 +3,7 @@ import json
 
 # 送信するJSONデータ
 
+# new room
 data = {
     "mode": "new_room",
     "data": {
@@ -12,6 +13,7 @@ data = {
 }
 
 """
+#join room
 data = {
             "mode": "join_room",
             "data": {

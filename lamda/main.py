@@ -1,21 +1,22 @@
 import json
-import random
+import data_function 
 
-# 新しいルームを作成した際の関数(部屋IDの発行とゲーム管理DBへの登録)
+
+# 新しいルームを作成した際の関数(部屋IDの発行し,ゲーム管理DBへの登録)
 def new_room(data):
     n_mem = data["n_mem"]
     owner_id = data["owner_id"]
-    # 部屋IDの発行
-    room_id = random_number = random.randint(100000, 999999)
     
-    ## yet: 本来はDynamoDB上でかぶりがないか確認する
-    ## yet: Dynamoに新しいゲームを登録する処理
+    ## yet: 本来はDynamoDB上でかぶりがないか確認し, 登録する
+    room_id, game_id = data_function.add_new_game(owner_id, n_mem)
     
+
     # レスポンスの作成
     response = {
                 'statusCode': 200,
                 'body': json.dumps({
-                    "room_id": room_id
+                    "room_id": room_id,
+                    "game_id": game_id,
                     })
                 }
     return response
