@@ -18,11 +18,11 @@
 - Response：
     ```
     {
-        "statusCode": 200,
-        "body": "{
-            \"room_id\": 754790,
-            \"password\": "halkas",
-            }"
+        'statusCode': 200,
+        "body": json.dumps({
+            'message': "OK", 
+            "roomid": 827912, 
+            "password": "asakfj"})
     }
     ```
 
@@ -44,40 +44,40 @@
     - 成功した場合
         ```
         {
-            'status': 200,
-            'message': "OK"
+            'statusCode': 200,
+            "body": json.dumps({'message': "OK"})
         }
         ```
     - 失敗した場合
         ```
         // 部屋が見つからない
         {
-            'status': 404,
-            'message': "RoomID is not found"
+            'statusCode': 404,
+            "body": json.dumps({'message': "RoomID is not found"})
         }
 
         // パスワードが違う
         {
-            'status': 401,
-            'message': "Password is incorrect"
+            'statusCode': 401,
+            "body": json.dumps({'message': "Password is incorrect"})
         }
 
         // ルームのstate(募集中)が0でない
         {
-            'status': 403,
-            'message': "Room is not available"
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not available"})
         }
 
         // ルームが満員
         {
-            'status': 403,
-            'message': "Room is full"
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is full"})
         }
         
         // ルームに同じユーザー名が既に存在する。
         {
-            'status': 409,
-            'message': "User name is already used"
+            'statusCode': 409,
+            "body": json.dumps({'message': "User name is already used"})
         }
         ```
 
@@ -98,15 +98,15 @@
     - 成功
     ```
     {
-        'status': 200,
-        'message': "OK"
+        'statusCode': 200,
+        "body": json.dumps({'message': "OK"})
     }
     ```
     - ユーザー名がオーナーでなかった場合
     ```
     {
-        'status': 403,
-        'message': "You are not owner"
+        'statusCode': 403,
+        "body": json.dumps({'message': "You are not owner"})
     }
     ```
 
@@ -127,26 +127,26 @@
     -   成功
         ```
         {
-            'status': 200,
-            'message': "OK"
+            'statusCode': 200,
+            "body": json.dumps({'message': "OK"})
         }
         ```
     - 失敗
         ```
         # 部屋が存在しない場合
         {
-            'status': 404,
-            'message': "User name is not found"
+            'statusCode': 404,
+            "body": json.dumps({'message': "User name is not found"})
         }
         # オーナーだった場合
         {
-            'status': 403,
-            'message': "You are owner, so you cannot leave the room"
+            'statusCode': 403,
+            "body": json.dumps({'message': "You are owner, so you cannot leave the room"})
         }
         # 部屋が待ち状態ではない場合
         {
-            'status': 403,
-            'message': "Room is not in Waiting Mode"
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not in Waiting Mode"})
         }
         ```
 
@@ -168,31 +168,30 @@
     - 成功
         ```
         {
-            'status': 200,
-            'message': "OK",
-            "body": {"hacked": ["ゆう"]}
+            'statusCode': 200,
+            "body": json.dumps({'message': "OK", "hacked": hacked})
         }
         ```
     - 失敗
         ```
         # オーナーじゃない場合
         {
-            'status': 403,
-            'message': "You are not owner"
+            'statusCode': 403,
+            "body": json.dumps({'message': "You are not owner"})
         }
         # ルームの状態が待ち状態じゃない場合
         {
-            'status': 403,
-            'message': "Room is not in Waiting Mode"
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not in Waiting Mode"})
         }
         # メンバー数がn_memに達していない場合
         {
-            'status': 403,
-            'message': "Room is not full"
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not full"})
         }
         # n_hackedが既定のレンジ外の場合(レンジ：1以上, n_memの半数未満)
         {
-            'status': 403,
-            'message': "n_hacked is out of range"
+            'statusCode': 403,
+            "body": json.dumps({'message': "n_hacked is out of range"})
         }
         ```
