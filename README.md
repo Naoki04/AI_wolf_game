@@ -30,3 +30,4 @@ This is an AI assigned-conversational game for 3~8 players. Developped for a Mon
                 参加者への通知(〇〇さんが入室しました), ルート画面への移動, ゲーム管理DBのcurrent_memの更新
 
 - "/gaming_room/${roomID}" ゲーム進行室
+
