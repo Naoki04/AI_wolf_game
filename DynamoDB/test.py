@@ -138,6 +138,14 @@ def join_room(roomid, password, user_name):
             'message': "Password is incorrect"
         }
         return response
+    # Stateの確認
+    if room_info['State'] != 0:
+        print("Room is not available")
+        response = {
+            'status': 403,
+            'message': "Room is not available"
+        }
+        return response
     # メンバー数の確認
     if room_info['Current_mem'] >= room_info['N_mem']:
         print("Room is full")
@@ -157,7 +165,7 @@ def join_room(roomid, password, user_name):
     # メンバーの追加
     members = room_info['Members']
     members.append(user_name)
-    
+
     # データベースの更新
     game_manager.update_item(
         Key={
