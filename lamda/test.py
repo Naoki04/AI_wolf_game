@@ -25,6 +25,16 @@ data = {
     }
 }
 """
+
+# close_room
+data = {
+    "mode": "close_room",
+    "data": {
+        "room_id": 885965,
+        "owner_name": "るき"
+    }
+}
+
 """
 # leave_room
 data = {
@@ -35,7 +45,7 @@ data = {
     }
 }
 """
-
+"""
 # start_game
 data = {
     "mode": "start_game",
@@ -45,7 +55,7 @@ data = {
         "n_hacked": 1
     }
 }
-
+"""
 
 
 
