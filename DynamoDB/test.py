@@ -8,6 +8,7 @@ dynamodb = boto3.resource(
         region_name='ap-northeast-3',
         aws_access_key_id=credentials.aws_access_key,
         aws_secret_access_key=credentials.aws_secret_key,
+
         #aws_session_token='YOUR_SESSION_TOKEN
         )
 
