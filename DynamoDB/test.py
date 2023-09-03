@@ -54,10 +54,15 @@ def new_item():
     )
     return  0
 
-def create_room(n_mem, user_name):
-    # ゲーム管理テーブルのスキャン
+# ゲーム管理テーブルの全項目取得
+def scan_game_manager():
     response = game_manager.scan()
     items = response['Items']
+    return  items
+
+def create_room(n_mem, user_name):
+    # ゲーム管理テーブルのスキャン
+    items = scan_game_manager()
     
     # ルームIDの発行
     ## 既存のルームIDのリスト化
@@ -109,15 +114,80 @@ def get_item(roomid):
     print(item)
     return item
 
+
+def join_room(roomid, password, user_name):
+    # ゲーム管理テーブルのスキャン
+    items = scan_game_manager()
+
+    # ルームIDの存在確認
+    existing_room_ids = [item['RoomID'] for item in items]
+    if roomid not in existing_room_ids:
+        print("RoomID", roomid, "is not found")
+        response = {
+            'status': 404,
+            'message': "RoomID is not found"
+        }
+        return response
+    # 該当ルーム情報の取得
+    room_info = [item for item in items if item['RoomID'] == roomid][0]
+    # パスワードの確認
+    if room_info['Password'] != password:
+        print("Password is incorrect")
+        response = {
+            'status': 401,
+            'message': "Password is incorrect"
+        }
+        return response
+    # メンバー数の確認
+    if room_info['Current_mem'] >= room_info['N_mem']:
+        print("Room is full")
+        response = {
+            'status': 403,
+            'message': "Room is full"
+        }
+        return response
+    # 名前の重複確認
+    if user_name in room_info['Members']:
+        print("User name is already used")
+        response = {
+            'status': 409,
+            'message': "User name is already used"
+        }
+        return response
+    # メンバーの追加
+    members = room_info['Members']
+    members.append(user_name)
+    
+    # データベースの更新
+    game_manager.update_item(
+        Key={
+            'RoomID': roomid,
+        },
+        UpdateExpression='SET Members = :val1, Current_mem = :val2',
+        ExpressionAttributeValues={
+            ':val1': members,
+            ':val2': len(members),
+        }
+    )
+    print(user_name, "joined", roomid)
+    response = {
+        'status': 200,
+        'message': "OK"
+    }
+    return response
+    
+
+
 def main():
     # ゲーム管理テーブルの作成
     ## テーブル作成をAWSマネジメントコンソールで行うとkeyschemaがHASHにならないので, scanで条件指定した際に怒られる。
     #make_game_table()
     #new_item()
-
-    create_room(4, "ゆう")
-
     #get_item(419211)
+
+    #create_room(4, "ゆう")
+
+    join_room(390296, "jcamvr", "めい")
     return 0
 
 
