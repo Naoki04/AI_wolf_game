@@ -94,6 +94,20 @@
     }
     ```
 - Response: 
+    - 成功
+    ```
+    {
+        'status': 200,
+        'message': "OK"
+    }
+    ```
+    - ユーザー名がオーナーでなかった場合
+    ```
+    {
+        'status': 403,
+        'message': "You are not owner"
+    }
+    ```
 
 ### leave_room
 - 概要：
