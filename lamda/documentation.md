@@ -9,8 +9,8 @@
     {
         "mode": "new_room",
         "data": {
-            "n_mem": 5, //ゲームに参加する人数
-            "owner_name": "ゆう"  //オーナーのユーザー名
+            "n_mem": 5, //ゲームに参加する人数(int)
+            "owner_name": "ゆう"  //オーナーのユーザー名(str)
             }
     }
     ```
@@ -33,8 +33,9 @@
     {
         "mode": "join_room",
         "data": {
-                "room_id": 290912,  //入力された部屋ID
-                "user_id": "aahi11a12" //ユーザー識別子
+                "room_id": 290912,  #入力された部屋ID(int)
+                "password": "aahija" #4桁のアルファベット(str)
+                "user_name": "みき", #参加者のユーザー名(str)
                 }
     }
     ```
@@ -42,9 +43,39 @@
     - 成功した場合
         ```
         {
-            "statusCode": 200,
-            'body': json.dumps({
-                    "message": "successfully done"
-                    })
+            'status': 200,
+            'message': "OK"
+        }
+        ```
+    - 失敗した場合
+        ```
+        // 部屋が見つからない
+        {
+            'status': 404,
+            'message': "RoomID is not found"
+        }
+
+        // パスワードが違う
+        {
+            'status': 401,
+            'message': "Password is incorrect"
+        }
+
+        // ルームのstate(募集中)が0でない
+        {
+            'status': 403,
+            'message': "Room is not available"
+        }
+
+        // ルームが満員
+        {
+            'status': 403,
+            'message': "Room is full"
+        }
+        
+        // ルームに同じユーザー名が既に存在する。
+        {
+            'status': 409,
+            'message': "User name is already used"
         }
         ```
