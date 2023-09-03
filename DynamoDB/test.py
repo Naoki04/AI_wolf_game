@@ -5,8 +5,8 @@ table_name = 'game_manager_2'
 dynamodb = boto3.resource(
         "dynamodb", 
         region_name='ap-northeast-3',
-        aws_access_key_id='AKIA3A2XCT5QQKAEUDUF',
-        aws_secret_access_key='T6j/4M8ykfMF4/AwFovF27xhgPsKSnNF2wCRqRpz',
+        aws_access_key_id='',
+        aws_secret_access_key='',
         #aws_session_token='YOUR_SESSION_TOKEN
         )
 
