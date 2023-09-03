@@ -100,7 +100,12 @@ def create_room(n_mem, user_name):
         }
     )
     print("Room Created| roomid:", roomid, ", password:", password)
-    return int(roomid), password
+    response = {
+        'status': 200,
+        'message': "OK",
+        "body": {"roomid": roomid, "password": password}
+    }
+    return response
 
 
 def get_item(roomid):
@@ -336,7 +341,7 @@ def main():
     #close_room(459662, "はる")
     #leave_room(454030, "めい")
 
-    start_game(454030, "みち", n_hacked=1)
+    #start_game(454030, "みち", n_hacked=1)
     return 0
 
 

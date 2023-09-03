@@ -2,13 +2,13 @@
 - エンドポイント: (秘密)
 ## 関数一覧
 
-### new_room:
+### create_room:
 - 概要：オーナーが新しい部屋を作成する際に実行する関数。ゲームIDと部屋IDを発行し, ゲーム管理テーブルの新しいアイテムとして書き込む。
 - Method: POST
 - Request:
     ```
     {
-        "mode": "new_room",
+        "mode": "create_room",
         "data": {
             "n_mem": 5, //ゲームに参加する人数(int)
             "owner_name": "ゆう"  //オーナーのユーザー名(str)
