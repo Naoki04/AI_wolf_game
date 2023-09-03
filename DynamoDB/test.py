@@ -111,7 +111,7 @@ def get_item(roomid):
         }
     )
     item = response['Item']
-    print(item)
+    #print(item)
     return item
 
 
@@ -213,6 +213,55 @@ def close_room(roomid, owner_name):
     }
     return response
 
+def leave_room(roomid, user_name):
+    # 該当ルーム情報の取得
+    room_info = get_item(roomid)
+    # メンバーの確認
+    if user_name not in room_info['Members']:
+        print("User name is not found in the room")
+        response = {
+            'status': 404,
+            'message': "User name is not found"
+        }
+        return response
+    # オーナーでないことの確認
+    if user_name == room_info['Members'][0]:
+        print("You are owner, so you cannot leave the room")
+        response = {
+            'status': 403,
+            'message': "You are owner, so you cannot leave the room"
+        }
+        return response
+    
+    # GameStateの確認
+    if room_info['GameState'] != 0:
+        print("Room is not in Waiting Mode")
+        response = {
+            'status': 403,
+            'message': "Room is not in Waiting Mode"
+        }
+        return response
+    # メンバーの削除
+    members = room_info['Members']
+    members.remove(user_name)
+    # データベースの更新
+    game_manager.update_item(
+        Key={
+            'RoomID': roomid,
+        },
+        UpdateExpression='SET Members = :val1, Current_mem = :val2',
+        ExpressionAttributeValues={
+            ':val1': members,
+            ':val2': len(members),
+        }
+    )
+    print(user_name, "left room", roomid)
+    response = {
+        'status': 200,
+        'message': "OK"
+    }
+    return response
+
 def main():
     # ゲーム管理テーブルの作成
     ## テーブル作成をAWSマネジメントコンソールで行うとkeyschemaがHASHにならないので, scanで条件指定した際に怒られる。
@@ -220,10 +269,11 @@ def main():
     #new_item()
     #get_item(419211)
 
-    #create_room(5, "はる")
     print("----")
-    #join_room(459662, "nsmizt", "めい")
-    close_room(459662, "はる")
+    #create_room(3, "みち")
+    #join_room(454030, "fkgtbg", "めい")
+    #close_room(459662, "はる")
+    leave_room(454030, "めい")
     return 0
 
 

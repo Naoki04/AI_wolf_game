@@ -1,7 +1,8 @@
 # Lamdaで実装したRestAPIの仕様
 - エンドポイント: (秘密)
 ## 関数一覧
-### new_room: 実装済み
+
+### new_room:
 - 概要：オーナーが新しい部屋を作成する際に実行する関数。ゲームIDと部屋IDを発行し, ゲーム管理テーブルの新しいアイテムとして書き込む。
 - Method: POST
 - Request:
@@ -110,6 +111,46 @@
     ```
 
 ### leave_room
+- 概要：waiting状態の時に参加者が部屋から退出する関数。オーナーは退出できない。
+- Method: POST
+- Request:
+    ```
+    {
+        "mode": "leave_room",
+        "data": {
+                "room_id": 290912,  #入力された部屋ID(int)
+                "user_name": "みき", #自分(参加者)のユーザー名(str)
+                }
+    }
+    ```
+- Response: 
+    -   成功
+        ```
+        {
+            'status': 200,
+            'message': "OK"
+        }
+        ```
+    - 失敗
+        ```
+        # 部屋が存在しない場合
+        {
+            'status': 404,
+            'message': "User name is not found"
+        }
+        # オーナーだった場合
+        {
+            'status': 403,
+            'message': "You are owner, so you cannot leave the room"
+        }
+        # 部屋が待ち状態ではない場合
+        {
+            'status': 403,
+            'message': "Room is not in Waiting Mode"
+        }
+        ```
+
+### start_game
 - 概要：
 - Method: 
 - Request:
