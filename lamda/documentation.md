@@ -79,3 +79,24 @@
             'message': "User name is already used"
         }
         ```
+
+### close_room
+- 概要： オーナーがルームをクローズする際の関数。ゲーム管理DBのStateを3にする。
+- Method: POST
+- Request:
+    ```
+    {
+        "mode": "close_room",
+        "data": {
+                "room_id": 290912,  #入力された部屋ID(int)
+                "owner_name": "みき", #自分(オーナー)のユーザー名(str)
+                }
+    }
+    ```
+- Response: 
+
+### leave_room
+- 概要：
+- Method: 
+- Request:
+- Response: 

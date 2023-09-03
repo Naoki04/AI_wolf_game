@@ -8,7 +8,7 @@
 - n_mem: そのゲームに参加する人数(3~8人)
 - OwnerID: 部屋の作成者の識別子
 - UserIDs: 参加者の識別子(リスト)
-- State: ゲームの状態
+- GameState: ゲームの状態
     - 0: 募集中
     - 1: ゲーム中
     - 2: ゲーム終了
@@ -17,7 +17,7 @@
 
 |Partiation Key|SortKey|Attribute|Attribute|Attribute|Attribute|Attribute|Attribute|
 |--|--|--|--|--|--|--|--|
-|GameID|RoomID|n_mem(人数)|OwnerID|MemberIDs|n_hacked|Hacked|State|created-at|
+|GameID|RoomID|n_mem(人数)|OwnerID|MemberIDs|n_hacked|Hacked|GameState|created-at|
 |1|703712|5|"ajlra321"|["daow121", "daw131", "sgsrg21", "fjea412"]|1|[]|0|yyyymmdd-hh-mm-ss|
 |2|732712|4|"daow134"|["ddawow121", "daw131", "fjea412"]|1|[]|0|yyyymmdd-hh-mm-ss|
 

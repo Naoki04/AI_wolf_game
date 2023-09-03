@@ -47,7 +47,7 @@ def new_item():
             'Members': ["asae", "asda"],
             'N_hacked': 1,
             'Hacked': [],
-            'State': 0,
+            'GameState': 0,
             'Created-at': '20230931-09-12-43',
             'Current_mem': len([])
         }
@@ -83,7 +83,7 @@ def create_room(n_mem, user_name):
     
     # その他の属性
     members = [user_name]
-    state = 0
+    gamestate = 0
 
     # テーブルへのアイテムの追加
     game_manager.put_item(
@@ -94,7 +94,7 @@ def create_room(n_mem, user_name):
             'Members': members,
             'N_hacked': 1,
             'Hacked': [],
-            'State': state,
+            'GameState': gamestate,
             'Created-at': timestamp,
             'Current_mem': len(members),
         }
@@ -138,8 +138,8 @@ def join_room(roomid, password, user_name):
             'message': "Password is incorrect"
         }
         return response
-    # Stateの確認
-    if room_info['State'] != 0:
+    # GameStateの確認
+    if room_info['GameState'] != 0:
         print("Room is not available")
         response = {
             'status': 403,
@@ -184,7 +184,34 @@ def join_room(roomid, password, user_name):
     }
     return response
     
-
+def close_room(roomid, owner_name):
+    # 該当ルーム情報の取得
+    room_info = get_item(roomid)
+    # オーナー名の確認
+    if room_info['Members'][0] != owner_name:
+        print("You are not owner")
+        response = {
+            'status': 403,
+            'message': "You are not owner"
+        }
+        return response
+    
+    # GameStateの更新(3: 取り消し)
+    game_manager.update_item(
+        Key={
+            'RoomID': roomid,
+        },
+        UpdateExpression='SET GameState = :val1',
+        ExpressionAttributeValues={
+            ':val1': 3,
+        }
+    )
+    print("Room", roomid, "is closed by owner")
+    response = {
+        'status': 200,
+        'message': "OK"
+    }
+    return response
 
 def main():
     # ゲーム管理テーブルの作成
@@ -193,9 +220,10 @@ def main():
     #new_item()
     #get_item(419211)
 
-    #create_room(4, "ゆう")
-
-    join_room(390296, "jcamvr", "めい")
+    #create_room(5, "はる")
+    print("----")
+    #join_room(459662, "nsmizt", "めい")
+    close_room(459662, "はる")
     return 0
 
 
