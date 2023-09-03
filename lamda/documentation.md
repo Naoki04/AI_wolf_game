@@ -10,7 +10,7 @@
         "mode": "new_room",
         "data": {
             "n_mem": 5, //ゲームに参加する人数
-            "owner_id": "dahi11e32"  //オーナーのユーザー識別子
+            "owner_name": "ゆう"  //オーナーのユーザー名
             }
     }
     ```
@@ -19,8 +19,8 @@
     {
         "statusCode": 200,
         "body": "{
-            \"room_id\": 754790, //発行された部屋ID
-            \"game_id\": 12,
+            \"room_id\": 754790,
+            \"password\": "halkas",
             }"
     }
     ```
