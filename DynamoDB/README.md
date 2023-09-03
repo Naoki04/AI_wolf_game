@@ -15,16 +15,16 @@
     - 3: ゲーム取り消し・中断
 - CreatedAt: ゲームが作成された時刻(yyyymmdd-hh-mm-ss形式で文字列)
 
-|Partiation Key|SortKey|Attribute|Attribute|Attribute|Attribute|Attribute|
-|--|--|--|--|--|--|--|
-|GameID|RoomID|n_mem(人数)|OwnerID|MemberIDs|State|created-at|
-|1|703712|5|"ajlra321"|["daow121", "daw131", "sgsrg21", "fjea412"]|0|yyyymmdd-hh-mm-ss|
-|2|732712|4|"daow134"|["ddawow121", "daw131", "fjea412"]|0|yyyymmdd-hh-mm-ss|
+|Partiation Key|SortKey|Attribute|Attribute|Attribute|Attribute|Attribute|Attribute|
+|--|--|--|--|--|--|--|--|
+|GameID|RoomID|n_mem(人数)|OwnerID|MemberIDs|n_hacked|Hacked|State|created-at|
+|1|703712|5|"ajlra321"|["daow121", "daw131", "sgsrg21", "fjea412"]|1|[]|0|yyyymmdd-hh-mm-ss|
+|2|732712|4|"daow134"|["ddawow121", "daw131", "fjea412"]|1|[]|0|yyyymmdd-hh-mm-ss|
 
 
 ## ゲーム進行テーブル
 ゲーム内での発言などを記録するテーブル。
-|発言ID|
+|質問ID|ゲームID|回答||
 
 ## 質問テーブル
 事前に用意した質問から出題するモードで使う質問を格納しておくテーブル
