@@ -262,6 +262,67 @@ def leave_room(roomid, user_name):
     }
     return response
 
+
+def start_game(roomid, owner_name, n_hacked):
+    # 部屋の情報を取得
+    room_info = get_item(roomid)
+    # オーナー名の確認
+    if room_info['Members'][0] != owner_name:
+        print("You are not owner")
+        response = {
+            'status': 403,
+            'message': "You are not owner"
+        }
+        return response
+    # GameStateの確認
+    if room_info['GameState'] != 0:
+        print("Room is not in Waiting Mode")
+        response = {
+            'status': 403,
+            'message': "Room is not in Waiting Mode"
+        }
+        return response
+    # メンバー数の確認
+    if room_info['Current_mem'] != room_info['N_mem']:
+        print("Room is not full")
+        response = {
+            'status': 403,
+            'message': "Room is not full"
+        }
+        return response
+    # n_hackedの数の確認
+    if n_hacked >= room_info['N_mem']/2 or n_hacked <= 0:
+        print("n_hacked is out of range")
+        response = {
+            'status': 403,
+            'message': "n_hacked is out of range"
+        }
+        return response
+    
+    # Hackedの選択
+    members = room_info['Members']
+    hacked = random.sample(members, n_hacked)
+    # GameStateの更新(1: ゲーム中)
+    game_manager.update_item(
+        Key={
+            'RoomID': roomid,
+        },
+        UpdateExpression='SET GameState = :val1, Hacked = :val2',
+        ExpressionAttributeValues={
+            ':val1': 1,
+            ':val2': hacked,
+        }
+    )
+    print("Game started in room", roomid, "| Hacked:" ,hacked)
+    response = {
+        'status': 200,
+        'message': "OK",
+        "body": {"hacked": hacked}
+    }
+    return response
+    
+
+
 def main():
     # ゲーム管理テーブルの作成
     ## テーブル作成をAWSマネジメントコンソールで行うとkeyschemaがHASHにならないので, scanで条件指定した際に怒られる。
@@ -271,9 +332,11 @@ def main():
 
     print("----")
     #create_room(3, "みち")
-    #join_room(454030, "fkgtbg", "めい")
+    #join_room(454030, "fkgtbg", "やすとも")
     #close_room(459662, "はる")
-    leave_room(454030, "めい")
+    #leave_room(454030, "めい")
+
+    start_game(454030, "みち", n_hacked=1)
     return 0
 
 

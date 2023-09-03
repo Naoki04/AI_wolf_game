@@ -118,7 +118,7 @@
     {
         "mode": "leave_room",
         "data": {
-                "room_id": 290912,  #入力された部屋ID(int)
+                "room_id": 290912,  
                 "user_name": "みき", #自分(参加者)のユーザー名(str)
                 }
     }
@@ -151,7 +151,48 @@
         ```
 
 ### start_game
-- 概要：
-- Method: 
-- Request:
+- 概要：条件(人数, state)が揃えば実行可能。n_hackedの人数を指定し, ゲームを開始する。Hackedを指定する。
+- Method: POST
+- Request: 
+    ```
+    {
+        "mode": "start_game",
+        "data": {
+                "room_id": 290912,  #入力された部屋ID(int)
+                "owner_name": "ゆう",
+                "n_hacked": 1, #Hackedの人数(1以上, N_memの半分未満)
+                }
+    }
+    ```
 - Response: 
+    - 成功
+        ```
+        {
+            'status': 200,
+            'message': "OK",
+            "body": {"hacked": ["ゆう"]}
+        }
+        ```
+    - 失敗
+        ```
+        # オーナーじゃない場合
+        {
+            'status': 403,
+            'message': "You are not owner"
+        }
+        # ルームの状態が待ち状態じゃない場合
+        {
+            'status': 403,
+            'message': "Room is not in Waiting Mode"
+        }
+        # メンバー数がn_memに達していない場合
+        {
+            'status': 403,
+            'message': "Room is not full"
+        }
+        # n_hackedが既定のレンジ外の場合(レンジ：1以上, n_memの半数未満)
+        {
+            'status': 403,
+            'message': "n_hacked is out of range"
+        }
+        ```
