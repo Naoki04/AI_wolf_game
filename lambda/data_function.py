@@ -103,7 +103,8 @@ def create_room(n_mem, user_name):
     print("Room Created| roomid:", roomid, ", password:", password)
     response = {
         'statusCode': 200,
-        "body": json.dumps({'message': "OK", "roomid": roomid, "password": password})
+        "body": json.dumps({'message': "OK", "roomid": roomid, "password": password}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
     }
     return response
 
@@ -130,7 +131,8 @@ def join_room(roomid, password, user_name):
         print("RoomID", roomid, "is not found")
         response = {
             'statusCode': 404,
-            "body": json.dumps({'message': "RoomID is not found"})
+            "body": json.dumps({'message': "RoomID is not found"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # 該当ルーム情報の取得
@@ -140,7 +142,8 @@ def join_room(roomid, password, user_name):
         print("Password is incorrect")
         response = {
             'statusCode': 401,
-            "body": json.dumps({'message': "Password is incorrect"})
+            "body": json.dumps({'message': "Password is incorrect"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # GameStateの確認
@@ -148,7 +151,8 @@ def join_room(roomid, password, user_name):
         print("Room is not available")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "Room is not available"})
+            "body": json.dumps({'message': "Room is not available"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # メンバー数の確認
@@ -156,7 +160,8 @@ def join_room(roomid, password, user_name):
         print("Room is full")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "Room is full"})
+            "body": json.dumps({'message': "Room is full"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # 名前の重複確認
@@ -164,7 +169,8 @@ def join_room(roomid, password, user_name):
         print("User name is already used")
         response = {
             'statusCode': 409,
-            "body": json.dumps({'message': "User name is already used"})
+            "body": json.dumps({'message': "User name is already used"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # メンバーの追加
@@ -185,7 +191,8 @@ def join_room(roomid, password, user_name):
     print(user_name, "joined", roomid)
     response = {
         'statusCode': 200,
-        "body": json.dumps({'message': "OK"})
+        "body": json.dumps({'message': "OK"}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
     }
     return response
     
@@ -197,7 +204,8 @@ def close_room(roomid, owner_name):
         print("You are not owner")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "You are not owner"})
+            "body": json.dumps({'message': "You are not owner"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     
@@ -214,7 +222,8 @@ def close_room(roomid, owner_name):
     print("Room", roomid, "is closed by owner")
     response = {
         'statusCode': 200,
-        "body": json.dumps({'message': "OK"})
+        "body": json.dumps({'message': "OK"}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
     }
     return response
 
@@ -226,7 +235,8 @@ def leave_room(roomid, user_name):
         print("User name is not found in the room")
         response = {
             'statusCode': 404,
-            "body": json.dumps({'message': "User name is not found"})
+            "body": json.dumps({'message': "User name is not found"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # オーナーでないことの確認
@@ -234,7 +244,8 @@ def leave_room(roomid, user_name):
         print("You are owner, so you cannot leave the room")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "You are owner, so you cannot leave the room"})
+            "body": json.dumps({'message': "You are owner, so you cannot leave the room"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     
@@ -243,7 +254,8 @@ def leave_room(roomid, user_name):
         print("Room is not in Waiting Mode")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "Room is not in Waiting Mode"})
+            "body": json.dumps({'message': "Room is not in Waiting Mode"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # メンバーの削除
@@ -263,7 +275,8 @@ def leave_room(roomid, user_name):
     print(user_name, "left room", roomid)
     response = {
         'statusCode': 200,
-        "body": json.dumps({'message': "OK"})
+        "body": json.dumps({'message': "OK"}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
     }
     return response
 
@@ -276,7 +289,8 @@ def start_game(roomid, owner_name, n_hacked):
         print("You are not owner")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "You are not owner"})
+            "body": json.dumps({'message': "You are not owner"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # GameStateの確認
@@ -284,7 +298,8 @@ def start_game(roomid, owner_name, n_hacked):
         print("Room is not in Waiting Mode")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "Room is not in Waiting Mode"})
+            "body": json.dumps({'message': "Room is not in Waiting Mode"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # メンバー数の確認
@@ -292,7 +307,8 @@ def start_game(roomid, owner_name, n_hacked):
         print("Room is not full")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "Room is not full"})
+            "body": json.dumps({'message': "Room is not full"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     # n_hackedの数の確認
@@ -300,7 +316,8 @@ def start_game(roomid, owner_name, n_hacked):
         print("n_hacked is out of range")
         response = {
             'statusCode': 403,
-            "body": json.dumps({'message': "n_hacked is out of range"})
+            "body": json.dumps({'message': "n_hacked is out of range"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
         }
         return response
     
@@ -321,7 +338,8 @@ def start_game(roomid, owner_name, n_hacked):
     print("Game started in room", roomid, "| Hacked:" ,hacked)
     response = {
         'statusCode': 200,
-        "body": json.dumps({'message': "OK", "hacked": hacked})
+        "body": json.dumps({'message': "OK", "hacked": hacked}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
     }
     return response
     
