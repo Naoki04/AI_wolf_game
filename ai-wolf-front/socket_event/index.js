@@ -25,4 +25,13 @@ export default (io, socket) => {
   socket.on("publishEvent", data => {
     io.sockets.emit("publishEvent", data);
   });
+
+  //roomIDに対応するメッセージリストを返す
+  socket.on("getRoomMessageList", data => {
+    socket.emit("getRoomMessageList", InRoomMessageList[data.roomId]);
+  });
+  //roomIDに対応するメッセージリストを返す
+  socket.on("getGlobalMessageList", data => {
+    socket.emit("getGlobalMessageList", GlobalMessageList);
+  });
 };
