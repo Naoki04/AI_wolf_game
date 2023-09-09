@@ -1,6 +1,7 @@
 <script setup>
   import { provide, ref } from "vue"
   import { useRouter } from "vue-router"
+  import Login_owner from "./components/Login_owner.vue"
 
   const router = useRouter()
   const Owner_input_username = ref("")
@@ -19,10 +20,21 @@
   provide("User_input_password", User_input_password)
   provide("User_input_username", User_input_username)
 
+  const roomID = ref();
+  const password = ref();
+  const IssuedEvent = (data) => {
+    roomID.value = data["Issued_roomID"];
+    password.value = data["Issued_password"];
+    console.log(roomID.value);
+    console.log(password.value);
+  };
+  
 </script>
 
 <template>
     <router-view />
+    <!--<Login_owner @close="tojimasu"></Login_owner>-->
+    <div @Issued="IssuedEvent"></div>
 </template>
 
 <style scoped>

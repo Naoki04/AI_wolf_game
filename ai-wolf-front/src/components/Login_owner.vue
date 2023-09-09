@@ -1,5 +1,6 @@
 <script setup>
-import { inject, ref, provide, onMounted } from "vue";
+import { inject } from "vue";
+//import { defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import axios from 'axios';
 
@@ -7,6 +8,13 @@ const router = useRouter();
 const Owner_input_username = inject("Owner_input_username");
 const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
+
+const emit = defineEmits();
+//const submitOya = () => {
+//  const data = 888111;
+//  emit('close', data);
+//};
+
 
 // 入室管理
 const onEnter_owner = async () => {
@@ -27,7 +35,6 @@ const onEnter_owner = async () => {
         owner_name: Owner_input_username.value, // オーナーのユーザー名(str)
       },
     };
-
     // POSTリクエストを送信
     response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
       headers: {
@@ -49,15 +56,26 @@ const onEnter_owner = async () => {
   if (response) {
     // roomIDを6桁の数字を用いてランダムに発行
     const Issued_roomID = response.data['roomid'];
-    console.log('ルームID:', Issued_roomID);
+    //console.log('ルームID:', Issued_roomID);
     // passwordも同様に発行
     const Issued_password = response.data['password']
-    console.log('パスワード:', Issued_password);
+    //console.log('パスワード:', Issued_password);
+    const data = {
+      "Issued_roomID": Issued_roomID,
+      "Issued_password": Issued_password,
+    };
+    console.log("Objectのデータ", data);
+    emit('Issued', data);
     // 待合室に移動
     router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
-  }
-}
-
+  };
+  //const data = {
+  //  "Issued_roomID": Issued_roomID,
+  //  "Issued_password": Issued_password,
+  //}
+  //console.log(data);
+  //emit('Issued', data);
+};
 </script>
 
 

@@ -2,7 +2,7 @@
 import io from "socket.io-client";
 import { inject, onMounted, reactive, ref } from "vue";
 
-const userName = inject("userName")
+const Owner_input_username = inject("userName")
 console.log(userName.value)
 const roomID = inject("roomID")
 console.log(roomID.value)
@@ -69,7 +69,7 @@ const registerSocketEvent = () => {
   <div class="mx-auto my-5 px-4">
     <h1 class="text-h3 font-weight-medium">Vue.js Chat チャットルーム</h1>
     <div class="mt-10">
-      <p>ログインユーザ：{{ userName }}さん</p>
+      <p>ログインユーザ：{{ Owner_input_username }}さん</p>
       <textarea variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area" v-model="chatContent"></textarea>
       <div class="mt-5">
         <button class="button-normal" @click="onPublish">投稿</button>
