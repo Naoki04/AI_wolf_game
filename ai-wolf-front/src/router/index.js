@@ -5,6 +5,7 @@ import Login_user from "../components/Login_user.vue"
 import Gaming_room from "../components/Gaming_room.vue"
 import Waiting_user from "../components/Waiting_user.vue"
 import Waiting_owner from "../components/Waiting_owner.vue"
+import test from "../components/test.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,6 +15,11 @@ const router = createRouter({
       name: "home",
       component: Home
     },{
+      path: "/test/",
+      name: "test",
+      component: test
+    },
+    {
       path: "/login_owner/",
       name: "login_owner",
       component: Login_owner

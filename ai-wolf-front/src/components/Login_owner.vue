@@ -1,73 +1,82 @@
 <script setup>
-import { inject, provide, ref } from "vue";
+import { inject, ref, provide, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import axios from 'axios';
 
-const router = useRouter()
-
-const roomID = ref("")
-provide("roomID", roomID)
-const Password = ref("")
-provide("Password", Password)
-
-const userName = inject("userName")
-
-//roomIDを6桁の数字を用いてランダムに発行する関数
-function generateRandomNumber() {
-  const min = 100000; // 最小値 (100000)
-  const max = 999999; // 最大値 (999999)
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-//passwordも同様に発行
-function generateRandomPassword() {
-  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
-  let password = "";
-  for (let i = 0; i < 8; i++) { // 長さを8文字に固定
-    const randomIndex = Math.floor(Math.random() * charset.length);
-    password += charset[randomIndex];
-  }
-  return password;
-}
-
+const router = useRouter();
+const Owner_input_username = inject("Owner_input_username");
+const n_mem = inject("n_mem");
+const n_hacked = inject("n_hacked");
 
 // 入室管理
-const onEnter = () => {
-    console.log(userName.value);
+const onEnter_owner = async () => {
+  let response; // response を外部で宣言
+
+  console.log(Owner_input_username.value);
   // ユーザー名が入力されているかチェック
-    if (userName.value.trim().replace("　","")===""){
-        window.alert("エラー");
-        return;
+  if (Owner_input_username.value.trim().replace("　","") === ""){
+    window.alert("ニックネームを入力してください");
+    return;
+  };
+
+  try {
+    const data = {
+      mode: 'create_room',
+      data: {
+        n_mem: n_mem.value, // ゲームに参加する人数(int)
+        owner_name: Owner_input_username.value, // オーナーのユーザー名(str)
+      },
     };
 
-    //roomIDを6桁の数字を用いてランダムに発行
-    roomID = generateRandomNumber();
-    console.log(roomID.value);
+    // POSTリクエストを送信
+    response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-    //passwordも同様に発行
-    // 8文字のランダムなパスワードを生成
-    Password = generateRandomPassword();
-    console.log(Password.value);
-    //待合室に移動
-    router.push({ name: "waiting_owner" })
-    
+    // レスポンスを処理
+    console.log('ステータスコード:', response.status);
+    console.log('レスポンスデータ:', response.data);
+  } catch (error) {
+    // エラーハンドリング
+    console.error('エラー:', error);
+  }
+  console.log('ユーザー名:', Owner_input_username.value);
+  console.log('参加人数:', n_mem.value);
+  console.log('ハックされた人数:', n_hacked.value);
+
+  if (response) {
+    // roomIDを6桁の数字を用いてランダムに発行
+    const Issued_roomID = response.data['roomid'];
+    console.log('ルームID:', Issued_roomID);
+    // passwordも同様に発行
+    const Issued_password = response.data['password']
+    console.log('パスワード:', Issued_password);
+    // 待合室に移動
+    router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
+  }
 }
+
 </script>
+
 
 <template>
   <div class="mx-auto my-5 px-4">
     <h1 class="header">オーナー登録</h1>
     <div class="mt-10">
       <p>ユーザー名</p>
-      <input type="text" class="namearea" v-model="userName" />
+      <input type="text" class="namearea" v-model="Owner_input_username" />
     </div>
     <div>
         <p>参加人数(3~10)</p>
-        <input type="number" class="namearea" min="3" max="10" />
+        <input type="number" class="namearea" min="3" max="10" v-model="n_mem" />
     </div>
     <div>
         <p>ハックされた人数(推奨2人)</p>
-        <input type="number" class="namearea" min="2" max="4" />
+        <input type="number" class="namearea" min="1" max="4" v-model="n_hacked"/>
     </div>
-    <button type="button" @click="onEnter" class="loginbtn loginbtn--shadow">ルームを作成</button>
+    <button type="button" @click="onEnter_owner" class="loginbtn loginbtn--shadow">ルームを作成</button>
   </div>
 </template>
 

@@ -1,37 +1,58 @@
 <script setup>
 import { inject } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
-const userName = inject("userName")
-const roomID = inject("roomID")
-const Password = inject("Password")
-const router = useRouter()
-// 入室メッセージをクライアントに送信する
-const onEnter = () => {
-  console.log(userName.value);
+const router = useRouter();
+const User_input_room_id = inject("User_input_room_id");
+const User_input_password = inject("User_input_password");
+const User_input_username = inject("User_input_username");
 
+const onEnter_user = async () => {
+  let response; // response を外部で宣言
   // ユーザー名が入力されているかチェック
-  if (userName.value.trim().replace("　","")===""){
-    window.alert("ニックネームを入力してください");
+  if (User_input_username.value.trim().replace("　", "") === "") {
+    window.alert('ニックネームを入力してください');
     return;
-  };
-
-  //未 DBを参照してroomIDが正しいかチェック
-  // 部屋番号がか正しいチェック
-  if (roomID.value===""){
-    window.alert("roomIDを入力してください");
-    return;
-  };
+  }
   
-  //未 DBを参照してPasswordが正しいかチェック
-  //passwordが正しいかチェック
-  if (Password.value===""){
-    window.alert("パスワードが間違っています。");
-    return;
-  };
+  try {
+    const data = {
+      mode: 'join_room',
+      data: {
+        User_input_room_id: Number(User_input_room_id.value),
+        User_input_password: User_input_password.value,
+        User_input_username: User_input_username.value,
+      },
+    };
+    console.log(data);
 
-  router.push({ name: "waiting_room" })
-}
+    // POSTリクエストを送信
+    response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // レスポンスを処理
+    console.log('ステータスコード1:', response.status);
+    console.log('レスポンスデータ1:', response.data);
+  } catch (error) {
+  // エラーハンドリング
+    console.error('エラー:', error);
+    if (error.response) {
+      console.log('ステータスコード2:', error.response.status);
+      console.log('レスポンスデータ2:', error.response.data);
+    } else {
+      console.error('レスポンスがありません');
+      }
+  }
+
+
+  if (response.data['message'] === 'OK') {
+      router.push({ name: 'waiting_user', params: { roomID: User_input_room_id.value } });
+    }
+};
 </script>
 
 <template>
@@ -39,17 +60,17 @@ const onEnter = () => {
     <h1 class="header">ユーザー登録</h1>
     <div class="mt-10">
       <p>ユーザー名</p>
-      <input type="text" class="namearea" v-model="userName"/>
+      <input type="text" class="namearea" v-model="User_input_username" />
     </div>
     <div>
-      <p>部屋番号を入力</p>
-      <input type="number" class="namearea" v-model="roomID"/>
+        <p>roomID</p>
+        <input type="numver" class="namearea" v-model="User_input_room_id" />
     </div>
     <div>
-      <p>パスワードを入力</p>
-      <input type="text" class="namearea" v-model="Password"/>
+        <p>Password</p>
+        <input type="text" class="namearea" v-model="User_input_password"/>
     </div>
-    <button type="button" @click="onEnter" class="loginbtn loginbtn--shadow">入室</button>
+    <button type="button" @click="onEnter_user" class="loginbtn loginbtn--shadow">ルームに入る</button>
   </div>
 </template>
 

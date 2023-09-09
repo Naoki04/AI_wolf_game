@@ -2,51 +2,34 @@
 import io from "socket.io-client";
 import { inject, onMounted, reactive, ref } from "vue";
 
-// #region global state
 const userName = inject("userName")
 console.log(userName.value)
-// #endregion
+const roomID = inject("roomID")
+console.log(roomID.value)
+const Password = inject("Password")
+console.log(Password.value)
 
-// #region local variable
 const socket = io()
 socket.emit("enterEvent",`${userName.value}さんが入室しました。`)
-// #endregion
-
-// #region reactive variable
 const chatContent = ref("")
 const chatList = reactive([])
-// #endregion
 
-// #region lifecycle
 onMounted(() => {
   registerSocketEvent()
 })
-// #endregion
 
-// #region browser event handler
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
   socket.emit("publishEvent",`${userName.value}さん：${chatContent.value}`)
-  // 入力欄を初期化
   chatContent.value =""
 }
+
 
 // 退室メッセージをサーバに送信する
 const onExit = () => {
   socket.emit("exitEvent", `${userName.value}さんが退出しました。`)
-
 }
 
-// メモを画面上に表示する
-const onMemo = () => {
-  // メモの内容を表示
-  chatList.unshift(`${userName.value}さんのメモ：${chatContent.value}`)
-  // 入力欄を初期化
-  chatContent.value=""
-}
-// #endregion
-
-// #region socket event handler
 // サーバから受信した入室メッセージ画面上に表示する
 const onReceiveEnter = (data) => {
   chatList.unshift(data)
@@ -61,9 +44,6 @@ const onReceiveExit = (data) => {
 const onReceivePublish = (data) => {
   chatList.unshift(data)
 }
-// #endregion
-
-// #region local methods
 // イベント登録をまとめる
 const registerSocketEvent = () => {
   // 入室イベントを受け取ったら実行
@@ -79,6 +59,7 @@ const registerSocketEvent = () => {
   // 投稿イベントを受け取ったら実行
   socket.on("publishEvent", (data) => {
     onReceivePublish(data);
+
   })
 }
 // #endregion
@@ -92,11 +73,10 @@ const registerSocketEvent = () => {
       <textarea variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area" v-model="chatContent"></textarea>
       <div class="mt-5">
         <button class="button-normal" @click="onPublish">投稿</button>
-        <button class="button-normal util-ml-8px" @click="onMemo">メモ</button>
       </div>
       <div class="mt-5" v-if="chatList.length !== 0">
         <ul>
-          <li class="chatitem" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li><!--クラス変更有-->
+          <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
         </ul>
       </div>
     </div>
