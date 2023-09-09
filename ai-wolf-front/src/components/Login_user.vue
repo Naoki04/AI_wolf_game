@@ -20,9 +20,9 @@ const onEnter_user = async () => {
     const data = {
       mode: 'join_room',
       data: {
-        User_input_room_id: Number(User_input_room_id.value),
-        User_input_password: User_input_password.value,
-        User_input_username: User_input_username.value,
+        "room_id": Number(User_input_room_id.value),
+        "password": User_input_password.value,
+        "user_name": User_input_username.value,
       },
     };
     console.log(data);
@@ -50,8 +50,8 @@ const onEnter_user = async () => {
 
 
   if (response.data['message'] === 'OK') {
-      router.push({ name: 'waiting_user', params: { roomID: User_input_room_id.value } });
-    }
+      router.push({ name: 'waiting_user', params: { roomID: User_input_room_id } });
+  }
 };
 </script>
 

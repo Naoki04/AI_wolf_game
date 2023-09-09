@@ -1,36 +1,11 @@
 <script setup>
-import { inject } from "vue";
 
-const roomID = inject("roomID");
-const password = inject("password");
-console.log("roomID: ", roomID.value);
-console.log("password: ", password.value);
-const n_mem = inject("n_mem");
-const n_hacked = inject("n_hacked");
 </script>
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">ユーザー待機室</h1>
-  </div> 
-  <div class="mx-auto my-5 px-4">
-    <div>
-      <h1 class="text-h3 font-weight-medium"></h1>
-      <p>あなたの部屋のルームIDは {{ roomID }}です。</p>
-    </div>
-    <div>
-      <h1 class="text-h3 font-weight-medium"></h1>
-      <p>あなたの部屋のパスワードは {{ password }}です。</p>
-    </div>
-    <div>
-      <h1 class="text-h3 font-weight-medium"></h1>
-      <p>メンバー数は: {{ n_mem }}人</p>
-    </div>
-    <div>
-      <h1 class="text-h3 font-weight-medium"></h1>
-      <p>ハックされた人数は: {{ n_hacked }}人</p>
-    </div>
-  </div> 
+    <p class="text-h3 font-weight-medium">オーナーがゲームを開始するまで少々お待ちください。</p>
+  </div>
 </template>
 
 <style scoped>

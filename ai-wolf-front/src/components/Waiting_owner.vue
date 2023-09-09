@@ -11,6 +11,9 @@ const n_hacked = inject("n_hacked");
 
 <template>
   <div class="mx-auto my-5 px-4">
+    <h1 class="text-h3 font-weight-medium">オーナー待機室</h1>
+  </div> 
+  <div class="mx-auto my-5 px-4">
     <div>
       <h1 class="text-h3 font-weight-medium"></h1>
       <p>ルームID: {{ roomID }}です。</p>
