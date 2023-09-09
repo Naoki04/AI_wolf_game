@@ -20,12 +20,13 @@ data = {
 data = {
     "mode": "join_room",
     "data": {
-        "room_id": 690763,
-        "password": "xjtfua",
-        "user_name": "ゆう"
+        "room_id": 390645,
+        "password": "hsibug",
+        "user_name": "ゆい"
     }
 }
 """
+
 
 # close_room
 """
@@ -54,7 +55,7 @@ data = {
 data = {
     "mode": "start_game",
     "data": {
-        "room_id": 690763,
+        "room_id": 390645,
         "owner_name": "るき",
         "n_hacked": 1
     }
@@ -72,7 +73,7 @@ data = {
 }
 """
 
-
+"""
 # end_game
 data = {
     "mode": "end_game",
@@ -80,7 +81,16 @@ data = {
         "room_id": 690763
     }
 }
+"""
 
+# add_dead
+data = {
+    "mode": "add_dead",
+    "data": {
+        "room_id": 390645,
+        "user_name": "ゆい"
+    }
+}
 
 
         
