@@ -195,3 +195,101 @@
             "body": json.dumps({'message': "n_hacked is out of range"})
         }
         ```
+
+### get_room_info
+- 概要：ルームIDに対して、参加者, ゲームの状態などを返す
+- Method: POST
+- Request: 
+    ```
+    {
+        "mode": "get_room_info",
+        "data": {
+                "room_id": 290912,  #部屋ID(int)
+                }
+    }
+    ```
+- Response: 
+    - 成功
+        ```
+        {
+            'statusCode': 200,
+            "body": json.dumps({
+                    'message': "OK", 
+                    "room_info": {
+                        "RoomID": 123456, 
+                        "Password": "akdjak",
+                        "Created-at": "yyyymmdd-hh-mm-ss", 
+                        "N_mem": 4,
+                        "Current_mem": 4, 
+                        "Members": ["ゆう", "みく", "はるか", "よう"], #先頭がオーナー
+                        "N_hacked": 1,
+                        "Hacked": ["よう"]
+                        "Dead": ["みく"]
+                        "GameState": 1, # 0:メンバー募集中, 1:ゲーム進行中, 2: ゲーム終了, 3: ゲーム中断
+                        }
+                }),
+        }
+        ```
+
+### end_game
+- 概要：ゲームが正常に終了した際, DBのGameStateを更新する
+- Method: POST
+- Request: 
+    ```
+    {
+        "mode": "end_game",
+        "data": {
+                "room_id": 290912,  #部屋ID(int)
+                }
+    }
+    ```
+- Response: 
+    - 成功
+        ```
+        {
+            'statusCode': 200,
+            "body": json.dumps({'message': "OK"}),
+        }
+        ```
+    - 失敗
+        ```
+        # ルームがゲーム中ではない場合
+        {
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not in Game Mode"}),
+        }
+        ```
+
+### add_dead
+- 概要：DBのDead属性に死亡判定のユーザーを追加する
+- Method: POST
+- Request: 
+    ```
+    {
+        "mode": "add_dead",
+        "data": {
+                "room_id": 290912,  #入力された部屋ID(int)
+                "user_name": "ゆう", #deadに追加する人
+                }
+    }
+    ```
+- Response: 
+    - 成功
+        ```
+        {
+        'statusCode': 200,
+        "body": json.dumps({'message': "OK"}),
+        }
+        ```
+    - 失敗
+        ```
+        # ゲームが進行中でない場合
+        {
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not in Game Mode"}),
+        }
+        # ルーム内に指定のユーザー名がない場合
+        {
+            'statusCode': 404,
+            "body": json.dumps({'message': "User name is not found in the room"}),
+        }

@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 import string
 import json
+from decimal import Decimal
 
 table_name = 'game_manager_2'
 
@@ -95,6 +96,7 @@ def create_room(n_mem, user_name):
             'Members': members,
             'N_hacked': 1,
             'Hacked': [],
+            'Dead': [],
             'GameState': gamestate,
             'Created-at': timestamp,
             'Current_mem': len(members),
@@ -120,6 +122,11 @@ def get_item(roomid):
     #print(item)
     return item
 
+# 数値をDecimalからintに変換する関数
+def convert_decimal_to_int(value):
+    if isinstance(value, Decimal):
+        return int(value)
+    return value
 
 def join_room(roomid, password, user_name):
     # ゲーム管理テーブルのスキャン
@@ -342,5 +349,97 @@ def start_game(roomid, owner_name, n_hacked):
         'headers': {'Access-Control-Allow-Origin': '*'}
     }
     return response
-    
 
+
+# Deadの追加
+def add_dead(roomid, user_name):
+    # 該当ルーム情報の取得
+    room_info = get_item(roomid)
+    # メンバーの確認
+    if user_name not in room_info['Members']:
+        print("User name is not found in the room")
+        response = {
+            'statusCode': 404,
+            "body": json.dumps({'message': "User name is not found in the room"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
+        }
+        return response
+    # GameStateの確認
+    if room_info['GameState'] != 1:
+        print("Room is not in Game Mode")
+        response = {
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not in Game Mode"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
+        }
+        return response
+    # メンバーをDeadに追加
+    dead = room_info['Dead']
+    dead.append(user_name)
+    # データベースの更新
+    game_manager.update_item(
+        Key={
+            'RoomID': roomid,
+        },
+        UpdateExpression='SET Dead = :val1',
+        ExpressionAttributeValues={
+            ':val1': dead,
+        }
+    )
+    print(user_name, "is dead in room", roomid)
+    response = {
+        'statusCode': 200,
+        "body": json.dumps({'message': "OK"}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
+    }
+    return response
+
+
+
+
+# ルーム情報の取得
+def get_room_info(roomid):
+    # 該当ルーム情報の取得
+    room_info = get_item(roomid) # 数値がDecimalで入ってる
+    converted = {key: convert_decimal_to_int(value) for key, value in room_info.items()} # Decimalをintに変換
+
+    # 送信
+    response = {
+        'statusCode': 200,
+        "body": json.dumps({'message': "OK", "room_info": converted}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
+    }
+    return response
+
+    
+# ゲーム終了をDBに反映
+def end_game(roomid):
+    # 該当ルーム情報の取得
+    room_info = get_item(roomid)
+    
+    # GameStateの確認
+    if room_info['GameState'] != 1:
+        print("Room is not in Game Mode")
+        response = {
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not in Game Mode"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
+        }
+        return response
+    # GameStateの更新(2: ゲーム終了)
+    game_manager.update_item(
+        Key={
+            'RoomID': roomid,
+        },
+        UpdateExpression='SET GameState = :val1',
+        ExpressionAttributeValues={
+            ':val1': 2,
+        }
+    )
+    print("Game ended in room", roomid)
+    response = {
+        'statusCode': 200,
+        "body": json.dumps({'message': "OK"}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
+    }
+    return response

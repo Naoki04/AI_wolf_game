@@ -324,8 +324,8 @@ def start_game(roomid, owner_name, n_hacked):
         'message': "OK",
         "body": {"hacked": hacked}
     }
-    return response
-    
+    return response    
+
 
 
 def main():

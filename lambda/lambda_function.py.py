@@ -44,6 +44,12 @@ def lambda_handler(event, context):
         elif mode =="start_game":
             print("start_game")
             res = data_function.start_game(data["room_id"], data["owner_name"], data["n_hacked"])
+        elif mode =="get_room_info":
+            res = data_function.get_room_info(data["room_id"])
+        elif mode =="add_dead":
+            res = data_function.add_dead(data["room_id"], data["user_name"])
+        elif mode =="end_game":
+            res = data_function.end_game(data["room_id"])
         else:
             res = {
                 "statusCode": 404,
