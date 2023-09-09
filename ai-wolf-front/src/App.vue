@@ -33,12 +33,6 @@
   provide("roomID", roomID)
   provide("password", password)
 
-//const doorStatus = ref();
-//const tojimasu = (data) => {
-//  doorStatus.value = data;
-//  console.log(doorStatus.value);
-//}
-
 </script>
 
 <template>
