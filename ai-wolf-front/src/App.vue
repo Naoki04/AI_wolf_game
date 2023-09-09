@@ -1,7 +1,7 @@
 <script setup>
   import { provide, ref } from "vue"
   import { useRouter } from "vue-router"
-  import Login_owner from "./components/Login_owner.vue"
+  //import Login_owner from "./components/Login_owner.vue"
 
   const router = useRouter()
   const Owner_input_username = ref("")
@@ -27,7 +27,7 @@
     password.value = data["Issued_password"];
     //console.log(roomID);
     //console.log(password);
-    console.log("ああああ");
+    //console.log("ああああ");
   };
   //eventの外側にprovideを書く。<->
   provide("roomID", roomID)
@@ -42,10 +42,13 @@
 </script>
 
 <template>
-    <router-view />
-    <!--<Login_owner @close="tojimasu"></Login_owner>-->
-    <Login_owner @issued="issued_event"></Login_owner>
+  <!-- <Login_owner>タグである必要があったが、router-viewタグに設定することで回避できた。 -->
+  <router-view @issued="issued_event"/>
+    <!--Login_ownerじゃないといけないのか,それともdivタグでもいいのか？
+    <div @issued="issued_event"></div>  これはダメだった
+  <Login_owner @issued="issued_event"></Login_owner>-->
 </template>
+
 
 <style scoped>
 </style>
