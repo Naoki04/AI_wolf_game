@@ -1,21 +1,23 @@
 <script setup>
-import { inject, defineProps } from "vue";
+import { inject } from "vue";
 
-const Issued_roomID = 4444
-const Issued_password = "password"
-const n_mem = inject("n_mem"); // デフォルト値を指定
-const n_hacked = inject("n_hacked"); // デフォルト値を指定
+const roomID = inject("roomID");
+const password = inject("password");
+console.log("roomID: ", roomID.value);
+console.log("password: ", password.value);
+const n_mem = inject("n_mem");
+const n_hacked = inject("n_hacked");
 </script>
 
 <template>
   <div class="mx-auto my-5 px-4">
     <div>
       <h1 class="text-h3 font-weight-medium"></h1>
-      <p>ルームID: {{ Issued_roomID }}です。</p>
+      <p>ルームID: {{ roomID }}です。</p>
     </div>
     <div>
       <h1 class="text-h3 font-weight-medium"></h1>
-      <p>パスワード: {{ Issued_password }}です。</p>
+      <p>パスワード: {{ password }}です。</p>
     </div>
     <div>
       <h1 class="text-h3 font-weight-medium"></h1>

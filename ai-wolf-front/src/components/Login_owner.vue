@@ -1,5 +1,5 @@
 <script setup>
-import { inject } from "vue";
+import { inject, ref } from "vue";
 //import { defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import axios from 'axios';
@@ -10,8 +10,9 @@ const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
 
 const emit = defineEmits();
+
+//const data = 11112;
 //const submitOya = () => {
-//  const data = 888111;
 //  emit('close', data);
 //};
 
@@ -60,22 +61,34 @@ const onEnter_owner = async () => {
     // passwordも同様に発行
     const Issued_password = response.data['password']
     //console.log('パスワード:', Issued_password);
+    // 待合室に移動
+
     const data = {
       "Issued_roomID": Issued_roomID,
       "Issued_password": Issued_password,
-    };
-    console.log("Objectのデータ", data);
-    emit('Issued', data);
-    // 待合室に移動
+    }
+    console.log(data)
+    //camelCaseは禁止。issuedは小文字じゃないとだめ。issued_room_idはOK
+    //camelCaseとは…　先頭の文字が小文字, 2つ目以降の単語の頭文字は大文字<=>snake_case
+    emit('issued', data);
     router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
   };
-  //const data = {
-  //  "Issued_roomID": Issued_roomID,
-  //  "Issued_password": Issued_password,
-  //}
-  //console.log(data);
-  //emit('Issued', data);
 };
+  
+//const data = {
+//  "Issued_roomID": Issued_roomID,
+//  "Issued_password": Issued_password,
+//}
+//console.log("submitIssued");
+//emit('Issued', data);
+
+//const allSubmit = () => {
+//  onEnter_owner();
+//  submitIssued();
+//  console.log("allSubmit");
+//  router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
+//};
+
 </script>
 
 

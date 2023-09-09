@@ -21,20 +21,30 @@
   provide("User_input_username", User_input_username)
 
   const roomID = ref();
-  const password = ref();
-  const IssuedEvent = (data) => {
+  const password = ref("");
+  const issued_event = (data) => {
     roomID.value = data["Issued_roomID"];
     password.value = data["Issued_password"];
-    console.log(roomID.value);
-    console.log(password.value);
+    //console.log(roomID);
+    //console.log(password);
+    console.log("ああああ");
   };
-  
+  //eventの外側にprovideを書く。<->
+  provide("roomID", roomID)
+  provide("password", password)
+
+//const doorStatus = ref();
+//const tojimasu = (data) => {
+//  doorStatus.value = data;
+//  console.log(doorStatus.value);
+//}
+
 </script>
 
 <template>
     <router-view />
     <!--<Login_owner @close="tojimasu"></Login_owner>-->
-    <div @Issued="IssuedEvent"></div>
+    <Login_owner @issued="issued_event"></Login_owner>
 </template>
 
 <style scoped>
