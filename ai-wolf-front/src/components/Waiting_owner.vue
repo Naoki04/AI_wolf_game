@@ -16,7 +16,7 @@ let Members = ref("");
 
 const onInformation = async () => {
   let response; // response を外部で宣言
-  console.log("ああああ")
+  //console.log("ああああ")
   
   try {
     const data = {
