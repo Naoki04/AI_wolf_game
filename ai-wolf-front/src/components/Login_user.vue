@@ -35,22 +35,22 @@ const onEnter_user = async () => {
     });
 
     // レスポンスを処理
-    console.log('ステータスコード1:', response.status);
-    console.log('レスポンスデータ1:', response.data);
+    console.log('ステータスコード:', response.status);
+    console.log('レスポンスデータ:', response.data);
   } catch (error) {
   // エラーハンドリング
     console.error('エラー:', error);
-    if (error.response) {
-      console.log('ステータスコード2:', error.response.status);
-      console.log('レスポンスデータ2:', error.response.data);
-    } else {
-      console.error('レスポンスがありません');
-      }
+  //  if (error.response) {
+  //    console.log('ステータスコード2:', error.response.status);
+  //    console.log('レスポンスデータ2:', error.response.data);
+  //  } else {
+  //    console.error('レスポンスがありません');
+  //    }
   }
 
 
   if (response.data['message'] === 'OK') {
-      router.push({ name: 'waiting_user', params: { roomID: User_input_room_id } });
+      router.push({ name: 'waiting_user', params: { roomID: User_input_room_id.value } });
   }
 };
 </script>
