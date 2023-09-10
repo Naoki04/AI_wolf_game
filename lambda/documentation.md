@@ -293,3 +293,96 @@
             'statusCode': 404,
             "body": json.dumps({'message': "User name is not found in the room"}),
         }
+
+### get_ai_answer
+- 概要：特定のHackedを担当するChatGPTに質問に対する回答をさせる。ChatGPTに入力するmessages(人格の設定や過去の会話履歴を格納)はゲーム管理DBのAI_msgsに辞書型(キーは担当のユーザー名)で格納されている。get_ai_answerが呼ばれると、指定されたHacked担当のmsgに質問を追加した上で、ChatGPT APIを呼び出し、その回答もmsgに格納してDBに保存する。
+- Method: POST
+- Request: 
+    ```
+    {
+        "mode": "get_ai_answer",
+        "data": {
+                "room_id": 290912,  #ゲーム中の部屋のID
+                "user_name": "ゆう", #Hackedのユーザーネーム
+                "question": "好きな食べ物は？" #質問内容
+                }
+    }
+    ```
+- Response: 
+    - 成功
+        ```
+        {
+        'statusCode': 200,
+        "body": json.dumps({'message': 'OK', 'answer': '優しい人'}),
+        }
+        ```
+    - 失敗
+        ```
+        # ユーザー名がHackedでない場合
+        {
+            'statusCode': 404,
+            "body": json.dumps({'message': "User name is not found in the room"}),
+        },
+        # ルームがゲームモードでない場合
+        {
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not in Game Mode"}),
+        },
+        
+        ```
+    - 補足：AI-msgsの中身は以下のようになっている。
+    ```
+    AI-msgs = {
+        "ゆい": messages1,
+        "はる": messages2
+        }
+
+    messages1=[
+        {
+            "role": "system",
+            "content": "あなたは20代前半女性で、友達とアイスブレイクゲームをしています。簡単なクイズに対して、簡潔に答えます。必ずしも文章で答える必要はありません。敬語は禁止で、できれば体現止めで答えてください。'答え：'などの形式も不要です。AIであると気づかれないように回答してください。です、ますは禁止です。"
+        },
+        
+        {
+            "role": "user",
+            "content": "好きなタイプは"
+        },
+        {
+            "role": "assistant",
+            "content": "まじめで素直な人。"
+        },
+        {
+            "role": "user",
+            "content": "好きな食べ物は"
+        },
+        {
+            "role": "assistant",
+            "content": "寿司"
+        },
+    ]
+
+    message2=[
+        {
+            "role": "system",
+            "content": "あなたは70代男性で、友達とアイスブレイクゲームをしています。簡単なクイズに対して、簡潔に答えます。必ずしも文章で答える必要はありません。敬語は禁止で、できれば体現止めで答えてください。'答え：'などの形式も不要です。AIであると気づかれないように回答してください。です、ますは禁止です。"
+        },
+        
+        {
+            "role": "user",
+            "content": "好きなタイプは"
+        },
+        {
+            "role": "assistant",
+            "content": "優しい人"
+        },
+        {
+            "role": "user",
+            "content": "好きな食べ物は"
+        },
+        {
+            "role": "assistant",
+            "content": "佃煮"
+        },
+    ]
+
+    ```

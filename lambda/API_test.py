@@ -17,17 +17,19 @@ data = {
 """
 
 
+
 # join_room
 """
 data = {
     "mode": "join_room",
     "data": {
-        "room_id": 956817,
-        "password": "bgjuga",
-        "user_name": "みく"
+        "room_id": 840959,
+        "password": "jgftjr",
+        "user_name": "ゆう"
     }
 }
 """
+
 
 
 # close_room
@@ -54,15 +56,16 @@ data = {
 
 
 # start_game
+"""
 data = {
     "mode": "start_game",
     "data": {
-        "room_id": 956817,
+        "room_id": 840959,
         "owner_name": "るき",
         "n_hacked": 1
     }
 }
-
+"""
 
 
 """
@@ -95,6 +98,16 @@ data = {
     }
 }
 """
+
+# get_ai_answer
+data = {
+    "mode": "get_ai_answer",
+    "data": {
+        "room_id": 840959,
+        "user_name": "ゆう",
+        "question": "好きなタイプは"
+    }
+}
 
         
 # APIエンドポイント

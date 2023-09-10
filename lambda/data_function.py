@@ -5,6 +5,7 @@ from datetime import datetime
 import string
 import json
 from decimal import Decimal
+import openai
 
 table_name = 'game_manager_2'
 
@@ -96,7 +97,7 @@ def create_room(n_mem, user_name):
             'Members': members,
             'N_hacked': 1,
             'Hacked': [],
-            'AI_msg': {},
+            'AI_msgs': {},
             'Dead': [],
             'GameState': gamestate,
             'Created-at': timestamp,
@@ -334,7 +335,7 @@ def start_game(roomid, owner_name, n_hacked):
     hacked = random.sample(members, n_hacked)
 
     # HackedにAIを割り当て
-    AI_msg = {}
+    AI_msgs = {}
     for person in hacked:
         message = []
         # 年齢・性別のランダム作成
@@ -352,18 +353,18 @@ def start_game(roomid, owner_name, n_hacked):
             "role": "system",
             "content": f"あなたは{result}で、友達とアイスブレイクゲームをしています。簡単なクイズに対して、簡潔に答えます。必ずしも文章で答える必要はありません。敬語は禁止で、できれば体現止めで答えてください。'答え：'などの形式も不要です。AIであると気づかれないように回答してください。です、ますは禁止です。"
         },)
-        AI_msg[person] = message
+        AI_msgs[person] = message
 
     # GameStateの更新(1: ゲーム中)
     game_manager.update_item(
         Key={
             'RoomID': roomid,
         },
-        UpdateExpression='SET GameState = :val1, Hacked = :val2, AI_msg = :val3',
+        UpdateExpression='SET GameState = :val1, Hacked = :val2, AI_msgs = :val3',
         ExpressionAttributeValues={
             ':val1': 1,
             ':val2': hacked,
-            ':val3': AI_msg,
+            ':val3': AI_msgs,
         }
     )
     print("Game started in room", roomid, "| Hacked:" ,hacked)
@@ -467,3 +468,78 @@ def end_game(roomid):
         'headers': {'Access-Control-Allow-Origin': '*'}
     }
     return response
+
+
+# ChatGPTに問い合わせ
+def chatgpt(messages):
+    openai.api_key = credentials.chatgpt_secret_key
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages
+    )
+
+    return(response['choices'][0]['message']['content'])
+
+# 回答の生成
+def get_ai_answer(roomid, user_name, question):
+    # 該当ルーム情報の取得
+    room_info = get_item(roomid)
+    # Hackedであることの確認
+    if user_name not in room_info['Hacked']:
+        print("User name is not found in Hacked list")
+        response = {
+            'statusCode': 404,
+            "body": json.dumps({'message': "User name is not found in Hacked list"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
+        }
+        return response
+    # GameStateの確認
+    if room_info['GameState'] != 1:
+        print("Room is not in Game Mode")
+        response = {
+            'statusCode': 403,
+            "body": json.dumps({'message': "Room is not in Game Mode"}),
+            'headers': {'Access-Control-Allow-Origin': '*'}
+        }
+        return response
+    # 対象のmessagesの取得と質問の追加
+    messages = room_info["AI_msgs"][user_name]
+    messages.append(
+        {
+            "role": "user",
+            "content": question
+        }
+    )
+
+    # ChatGPTへの問い合わせ
+    ans = chatgpt(messages)
+
+    # 回答のmsgsへの追加
+    messages.append(
+        {
+            "role": "assistant",
+            "content": ans
+        }
+    )
+    updated_AI_msgs = room_info["AI_msgs"]
+    updated_AI_msgs[user_name] = messages
+
+    # Databeseへの保存
+    game_manager.update_item(
+        Key={
+            'RoomID': roomid,
+        },
+        UpdateExpression='SET AI_msgs = :val1',
+        ExpressionAttributeValues={
+            ':val1': updated_AI_msgs,
+        }
+    )
+    print("AI answered in room", roomid, "| user:", user_name, ", question:", question, ", answer:", ans)
+    response = {
+        'statusCode': 200,
+        "body": json.dumps({'message': "OK", "answer": ans}),
+        'headers': {'Access-Control-Allow-Origin': '*'}
+    }
+    return response
+
+

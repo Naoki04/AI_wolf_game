@@ -50,6 +50,8 @@ def lambda_handler(event, context):
             res = data_function.add_dead(data["room_id"], data["user_name"])
         elif mode =="end_game":
             res = data_function.end_game(data["room_id"])
+        elif mode =="get_ai_answer":
+            res = data_function.get_ai_answer(data["room_id"], data["user_name"], data["question"])
         else:
             res = {
                 "statusCode": 404,
