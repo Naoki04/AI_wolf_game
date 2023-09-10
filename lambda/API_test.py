@@ -5,6 +5,7 @@ import json
 
 
 # new room
+
 """
 data = {
     "mode": "create_room",
@@ -15,14 +16,15 @@ data = {
 }
 """
 
-"""
+
 # join_room
+"""
 data = {
     "mode": "join_room",
     "data": {
-        "room_id": 390645,
-        "password": "hsibug",
-        "user_name": "ゆい"
+        "room_id": 956817,
+        "password": "bgjuga",
+        "user_name": "みく"
     }
 }
 """
@@ -50,17 +52,17 @@ data = {
 }
 """
 
-"""
+
 # start_game
 data = {
     "mode": "start_game",
     "data": {
-        "room_id": 390645,
+        "room_id": 956817,
         "owner_name": "るき",
         "n_hacked": 1
     }
 }
-"""
+
 
 
 """
@@ -83,6 +85,7 @@ data = {
 }
 """
 
+"""
 # add_dead
 data = {
     "mode": "add_dead",
@@ -91,7 +94,7 @@ data = {
         "user_name": "ゆい"
     }
 }
-
+"""
 
         
 # APIエンドポイント
@@ -104,20 +107,3 @@ response = requests.post(url, json=data)
 print(response.status_code)  # ステータスコード
 print(response.json())       # レスポンスのJSONデータ
 
-"""
-roomid = response.json()["room_id"]
-
-#join room
-data = {
-            "mode": "join_room",
-            "data": {
-                "room_id": roomid,
-                "user_id": "aahi11a12"
-            }
-        }
-
-# JSONデータを含むPOSTリクエストを送信
-response = requests.post(url, json=data)
-print(response.status_code)  # ステータスコード
-print(response.json())       # レスポンスのJSONデータ
-"""

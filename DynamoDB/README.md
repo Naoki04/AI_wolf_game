@@ -8,6 +8,8 @@
 - n_mem: そのゲームに参加する人数(3~8人)
 - OwnerID: 部屋の作成者の識別子
 - UserIDs: 参加者の識別子(リスト)
+- Dead: 死亡者のユーザー名のリスト(["ゆい", "はる"])
+- AI_messages: {"ゆい": [ChatGPTに送るmsg(system,assistant,user)], "みく": []} # それぞれのHackedを担当するAIのmsgを格納
 - GameState: ゲームの状態
     - 0: 募集中
     - 1: ゲーム中

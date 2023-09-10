@@ -96,6 +96,7 @@ def create_room(n_mem, user_name):
             'Members': members,
             'N_hacked': 1,
             'Hacked': [],
+            'AI_msg': {},
             'Dead': [],
             'GameState': gamestate,
             'Created-at': timestamp,
@@ -331,15 +332,38 @@ def start_game(roomid, owner_name, n_hacked):
     # Hackedの選択
     members = room_info['Members']
     hacked = random.sample(members, n_hacked)
+
+    # HackedにAIを割り当て
+    AI_msg = {}
+    for person in hacked:
+        message = []
+        # 年齢・性別のランダム作成
+        # 代のリストと性別のリストを定義します
+        generations = ["10代前半", "10代後半", "20代前半", "20代後半", "30代", "40代", "50代", "60代",  "90代"]
+        genders = ["男", "女"]
+        # ランダムに代と性別を選択します
+        random_generation = random.choice(generations)
+        random_gender = random.choice(genders)
+        # 文字列を生成します
+        result = f"{random_generation}{random_gender}性"
+
+        # 生成した人格をAIに付与
+        message.append({
+            "role": "system",
+            "content": f"あなたは{result}で、友達とアイスブレイクゲームをしています。簡単なクイズに対して、簡潔に答えます。必ずしも文章で答える必要はありません。敬語は禁止で、できれば体現止めで答えてください。'答え：'などの形式も不要です。AIであると気づかれないように回答してください。です、ますは禁止です。"
+        },)
+        AI_msg[person] = message
+
     # GameStateの更新(1: ゲーム中)
     game_manager.update_item(
         Key={
             'RoomID': roomid,
         },
-        UpdateExpression='SET GameState = :val1, Hacked = :val2',
+        UpdateExpression='SET GameState = :val1, Hacked = :val2, AI_msg = :val3',
         ExpressionAttributeValues={
             ':val1': 1,
             ':val2': hacked,
+            ':val3': AI_msg,
         }
     )
     print("Game started in room", roomid, "| Hacked:" ,hacked)
