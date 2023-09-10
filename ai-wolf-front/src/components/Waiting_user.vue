@@ -6,8 +6,8 @@ import axios from 'axios';
 const router = useRouter();
 const roomID = inject("roomID");
 const password = inject("password");
-const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
+const emit = defineEmits();
 
 // レスポンスデータを保持するリファレンス
 const responseData = ref(null);
@@ -16,6 +16,7 @@ const responseStatus = ref(null);
 const User_input_username = inject("User_input_username");
 const User_input_room_id = inject("User_input_room_id");
 
+let n_mem = ref("");
 let Current_mem = ref("");
 let Members = ref("");
 // APIリクエストを送信する関数
@@ -78,12 +79,16 @@ const onInformation = async () => {
     console.error('エラー:', error);
   }
   if (response) {
+    n_mem.value = response.data['room_info']['N_mem'];
     Current_mem.value = response.data['room_info']['Current_mem'];
     Members.value = response.data['room_info']['Members'];
     console.log('現在の参加人数:', Current_mem.value);
     console.log('参加者:', Members.value);
   }
 };
+
+const room_id = User_input_room_id.value;
+emit('usersend', room_id);
 
 let intervalId;
 
@@ -98,11 +103,11 @@ onMounted(() => {
   // 5秒ごとにAPIリクエストを送信し、intervalIdを保持
   intervalId = setInterval(() => {
     onInformation();
+    console.log("Current_mem.value: ", Current_mem.value);
+    console.log("n_mem.value: ", n_mem.value);
     if (Current_mem.value === n_mem.value) {
       console.log("ゲーム開始");
-      const room_id = User_input_room_id;
-      emit('usersend', room_id);
-      router.push({ name: "gaming_room", params: { roomID: roomID } });
+      router.push({ name: "gaming_room", params: { roomID: User_input_room_id.value } });
     };
   }, 5000);
 });

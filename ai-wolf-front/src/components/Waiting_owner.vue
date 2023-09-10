@@ -67,7 +67,7 @@ onMounted(() => {
     onInformation();
     if (Current_mem.value === n_mem.value) {
       console.log("ゲーム開始");
-      router.push({ name: "gaming_room", params: { roomID: roomID} });
+      router.push({ name: "gaming_room", params: { roomID: roomID.value } });
     };
   }, 5000);
 });

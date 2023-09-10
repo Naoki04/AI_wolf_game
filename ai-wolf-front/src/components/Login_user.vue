@@ -50,7 +50,7 @@ const onEnter_user = async () => {
 
 
   if (response.data['message'] === 'OK') {
-      router.push({ name: 'waiting_user', params: { roomID: User_input_room_id } });
+      router.push({ name: 'waiting_user', params: { roomID: User_input_room_id.value } });
   }
 };
 </script>

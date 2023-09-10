@@ -3,11 +3,13 @@ import io from "socket.io-client";
 import { inject, onMounted, reactive, ref } from "vue";
 
 const Owner_input_username = inject("Owner_input_username");
+const User_input_room_id = inject("User_input_room_id");
 const User_input_username = inject("User_input_username");
 const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
 
 console.log(Owner_input_username.value);
+console.log(User_input_room_id.value);
 console.log(User_input_username.value);
 console.log(n_mem.value);
 console.log(n_hacked.value);
