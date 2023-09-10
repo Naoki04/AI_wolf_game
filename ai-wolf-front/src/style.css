@@ -1,89 +1,73 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.card {
   padding: 2em;
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.button-normal {
+  border: 1px solid #555;
+  background-color: #eee;
+  border-radius: 4px;
+  padding: 4px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+
+
+/* 以下ログインページ追加分 */
+
+  /*ユーザー名入力欄*/
+.namearea{
+  display: block;
+  width: 200px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background:  #ffffff;
+  font-size: 14px;
+  white-space: pre-wrap;
+
+    /* ＆以降フォーカス時のCSS　*/
+  
+  &:focus {
+    outline: none;
+    border:double 2px #61ff83;
+    box-shadow: 0 0 0 2px rgb(0, 255, 247);
   }
-  a:hover {
-    color: #747bff;
   }
-  button {
-    background-color: #f9f9f9;
+
+    /* ここまで　*/
+
+.loginbtn{
+  margin-top: 2px;
+  color: #fff;
+  background-color: #eb6100;
+  border-bottom: 5px solid #b84c00;
+}
+.loginbtn:hover {
+    margin-top: 3px;
+    color: #fff;
+    background: #f56500;
+    border-bottom: 2px solid #b84c00;
+}
+.loginbtn--shadow {
+    -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
+}
+
+.header{
+  border: double 5px #0b1f22;
+  position: fixed;
+  top: 0;
+  color: rgb(12, 11, 11);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background-color: #efece7;
   }
+
+
+/* 以下チャットページ */
+
+.chatitem{
+  display: block;
+  border: 1.5px solid rgba(89, 88, 88, 0.5);
+  margin-top: 2px;
+  /*width: fit-content;*/
+  border-radius: 10px;
+  background:#76f592 
 }

@@ -1,7 +1,19 @@
-# Vue 3 + Vite
+# Vue Frontの技術要素
+ - Vue.js
+ - Vuetify
+ - Vite
+ - Vue Router
+ - Socket.io
+ - - WebSocketとは異なり、Socket.IOを使用すると、接続されているすべてのクライアントにメッセージをブロードキャストできます。
+ - - WebSocketは接続が切れると自動的再接続する。
+![AI_wolf_fromt](https://github.com/Naoki04/AI_wolf_game/assets/116880362/1a210ca1-1ed3-4149-89d8-562b2d1dccc6)
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+##  
+
 
 ## Recommended IDE Setup
+
+
+
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
