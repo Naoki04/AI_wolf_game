@@ -1,12 +1,86 @@
 <script setup>
-import { inject } from "vue";
+import { inject, ref, onBeforeUnmount, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axios from 'axios';
 
+const router = useRouter();
 const roomID = inject("roomID");
 const password = inject("password");
-console.log("roomID: ", roomID.value);
-console.log("password: ", password.value);
+//console.log("roomID: ", roomID.value);
+//console.log("password: ", password.value);
 const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
+//同期的に処理を行うために、ref()を用いていた
+let Current_mem = ref("");
+let Members = ref("");
+
+const onInformation = async () => {
+  let response; // response を外部で宣言
+  console.log("ああああ")
+  
+  try {
+    const data = {
+      mode: 'get_room_info',
+      data: {
+        "room_id": Number(roomID.value),
+      },
+    };
+
+    // POSTリクエストを送信
+    response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // レスポンスを処理
+    console.log('ステータスコード:', response.status);
+    console.log('レスポンスデータ:', response.data);
+    //Current_mem = response.data['Current_mem'];
+    //Members = response.data['Members'];
+    //console.log('現在の参加人数:', response.data['Current_mem']);
+    //console.log('参加者:', response.data['Members']);
+  } catch (error) {
+  // エラーハンドリング
+    console.error('エラー:', error);
+  }
+  if (response) {
+    Current_mem.value = response.data['room_info']['Current_mem'];
+    Members.value = response.data['room_info']['Members'];
+    console.log('現在の参加人数:', Current_mem.value);
+    console.log('参加者:', Members.value);
+  }
+};
+
+let intervalId;
+
+const stopUpdates = () => {
+  // intervalIdをクリアしてsetIntervalを停止
+  clearInterval(intervalId);
+};
+
+onMounted(() => {
+  // 初回のAPIリクエストを送信
+  onInformation();
+  // 3秒ごとにAPIリクエストを送信し、intervalIdを保持
+  intervalId = setInterval(() => {
+    onInformation();
+  }, 5000);
+});
+
+onBeforeUnmount(() => {
+  // コンポーネントがアンマウントされたときにintervalIdをクリアしてsetIntervalを停止
+  clearInterval(intervalId);
+});
+
+//このコードではintervalId変数を使用して
+//setIntervalのIDを保持し
+//コンポーネントがアンマウントされたときに
+//onBeforeUnmountフック内でclearIntervalを使用してsetIntervalを停止しています。
+//これにより、不要なリクエストの送信が停止されます。
+
+//onInformation();
+
 </script>
 
 <template>
@@ -30,9 +104,16 @@ const n_hacked = inject("n_hacked");
       <h1 class="text-h3 font-weight-medium"></h1>
       <p>ハックされた人数: {{ n_hacked }}人</p>
     </div>
+    <div>
+      <p>参加者予定数：{{ n_mem }}</p>
+      <p>現在の参加者数：{{ Current_mem }}</p>
+      <p>参加者：{{ Members }}</p>
+    </div>
+    <div>
+      <button type="button" @click="stopUpdates" class="loginbtn loginbtn--shadow">更新停止</button>
+    </div>
   </div> 
 </template>
-
 
 
 <style scoped>
