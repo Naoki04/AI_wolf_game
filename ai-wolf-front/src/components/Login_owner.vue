@@ -8,14 +8,12 @@ const router = useRouter();
 const Owner_input_username = inject("Owner_input_username");
 const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
-
 const emit = defineEmits();
 
 //const data = 11112;
 //const submitOya = () => {
 //  emit('close', data);
 //};
-
 
 // 入室管理
 const onEnter_owner = async () => {

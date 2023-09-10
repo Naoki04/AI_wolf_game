@@ -65,22 +65,27 @@ onMounted(() => {
   // 3秒ごとにAPIリクエストを送信し、intervalIdを保持
   intervalId = setInterval(() => {
     onInformation();
+    if (Current_mem.value === n_mem.value) {
+      console.log("ゲーム開始");
+      router.push({ name: "gaming_room", params: { roomID: roomID} });
+    };
   }, 5000);
 });
-
-onBeforeUnmount(() => {
-  // コンポーネントがアンマウントされたときにintervalIdをクリアしてsetIntervalを停止
-  clearInterval(intervalId);
-});
+//
+//if (Current_mem.value === n_mem.value) {
+//  console.log("ゲーム開始");
+//  router.push({ name: "gaming_room", params: { roomID: roomID.value} });
+//}
 
 //このコードではintervalId変数を使用して
 //setIntervalのIDを保持し
 //コンポーネントがアンマウントされたときに
 //onBeforeUnmountフック内でclearIntervalを使用してsetIntervalを停止しています。
 //これにより、不要なリクエストの送信が停止されます。
-
-//onInformation();
-
+onBeforeUnmount(() => {
+  // コンポーネントがアンマウントされたときにintervalIdをクリアしてsetIntervalを停止
+  clearInterval(intervalId);
+});
 </script>
 
 <template>

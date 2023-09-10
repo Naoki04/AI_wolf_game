@@ -1,6 +1,14 @@
 <script setup>
-import { ref, inject } from 'vue';
+import { ref, inject, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter } from "vue-router";
 import axios from 'axios';
+
+const router = useRouter();
+const roomID = inject("roomID");
+const password = inject("password");
+const n_mem = inject("n_mem");
+const n_hacked = inject("n_hacked");
+
 // レスポンスデータを保持するリファレンス
 const responseData = ref(null);
 const responseStatus = ref(null);
@@ -8,6 +16,8 @@ const responseStatus = ref(null);
 const User_input_username = inject("User_input_username");
 const User_input_room_id = inject("User_input_room_id");
 
+let Current_mem = ref("");
+let Members = ref("");
 // APIリクエストを送信する関数
 const onLeave = async () => {
   let response; // response を外部で宣言
@@ -37,6 +47,71 @@ const onLeave = async () => {
     console.error('エラー:', error);
   }
 };
+
+
+
+const onInformation = async () => {
+  let response; // response を外部で宣言
+  //console.log("ああああ")
+  
+  try {
+    const data = {
+      mode: 'get_room_info',
+      data: {
+        "room_id": Number(User_input_room_id.value),
+      },
+    };
+    console.log(data);
+
+    // POSTリクエストを送信
+    response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // レスポンスを処理
+    console.log('ステータスコード:', response.status);
+    console.log('レスポンスデータ:', response.data);
+  } catch (error) {
+  // エラーハンドリング
+    console.error('エラー:', error);
+  }
+  if (response) {
+    Current_mem.value = response.data['room_info']['Current_mem'];
+    Members.value = response.data['room_info']['Members'];
+    console.log('現在の参加人数:', Current_mem.value);
+    console.log('参加者:', Members.value);
+  }
+};
+
+let intervalId;
+
+const stopUpdates = () => {
+  // intervalIdをクリアしてsetIntervalを停止
+  clearInterval(intervalId);
+};
+
+onMounted(() => {
+  // 初回のAPIリクエストを送信
+  onInformation();
+  // 5秒ごとにAPIリクエストを送信し、intervalIdを保持
+  intervalId = setInterval(() => {
+    onInformation();
+    if (Current_mem.value === n_mem.value) {
+      console.log("ゲーム開始");
+      const room_id = User_input_room_id;
+      emit('usersend', room_id);
+      router.push({ name: "gaming_room", params: { roomID: roomID } });
+    };
+  }, 5000);
+});
+
+onBeforeUnmount(() => {
+  // コンポーネントがアンマウントされたときにintervalIdをクリアしてsetIntervalを停止
+  clearInterval(intervalId);
+});
+
 </script>
 
 
@@ -48,6 +123,10 @@ const onLeave = async () => {
     <!-- ボタンをクリックしてAPIリクエストを送信 -->
     <button type="button" @click="onLeave" class="loginbtn loginbtn--shadow">待機室を出る</button>
   </div>
+  <div>
+    <button type="button" @click="stopUpdates" class="loginbtn loginbtn--shadow">更新停止</button>
+  </div>
+  
 </template>
 
 <style scoped>

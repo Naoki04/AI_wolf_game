@@ -39,14 +39,7 @@ const router = createRouter({
       path: "/gaming_room/:roomID",
       name: "gaming_room",
       component: Gaming_room,
-      beforeEnter: (to, from, next) => {
-        if(from.name === "login"){
-          next()
-        } else {
-          next({ name:"login" })
-        }
-      },
-    }
+    },
   ],
 })
 

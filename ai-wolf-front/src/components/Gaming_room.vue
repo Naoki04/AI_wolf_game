@@ -2,15 +2,23 @@
 import io from "socket.io-client";
 import { inject, onMounted, reactive, ref } from "vue";
 
-const Owner_input_username = inject("userName")
-console.log(userName.value)
-const roomID = inject("roomID")
-console.log(roomID.value)
-const Password = inject("Password")
-console.log(Password.value)
+const Owner_input_username = inject("Owner_input_username");
+const User_input_username = inject("User_input_username");
+const n_mem = inject("n_mem");
+const n_hacked = inject("n_hacked");
+
+console.log(Owner_input_username.value);
+console.log(User_input_username.value);
+console.log(n_mem.value);
+console.log(n_hacked.value);
+
+const roomID = inject("roomID");
+const password = inject("password");
+console.log(roomID);
+console.log(password);
 
 const socket = io()
-socket.emit("enterEvent",`${userName.value}さんが入室しました。`)
+socket.emit("enterEvent",`${User_input_username.value}さんが入室しました。`)
 const chatContent = ref("")
 const chatList = reactive([])
 
@@ -20,14 +28,15 @@ onMounted(() => {
 
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
-  socket.emit("publishEvent",`${userName.value}さん：${chatContent.value}`)
+  socket.emit("publishEvent",`${User_input_username.value}さん：${chatContent.value}`)
+  socket.emit("publishEvent",`${Owner_input_username.value}さん：${chatContent.value}`)
   chatContent.value =""
 }
 
 
 // 退室メッセージをサーバに送信する
 const onExit = () => {
-  socket.emit("exitEvent", `${userName.value}さんが退出しました。`)
+  socket.emit("exitEvent", `${User_input_username.value}さんが退出しました。`)
 }
 
 // サーバから受信した入室メッセージ画面上に表示する
@@ -59,7 +68,6 @@ const registerSocketEvent = () => {
   // 投稿イベントを受け取ったら実行
   socket.on("publishEvent", (data) => {
     onReceivePublish(data);
-
   })
 }
 // #endregion
