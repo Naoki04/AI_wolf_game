@@ -8,19 +8,27 @@ const User_input_username = inject("User_input_username");
 const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
 
-console.log(Owner_input_username.value);
-console.log(User_input_room_id.value);
-console.log(User_input_username.value);
-console.log(n_mem.value);
-console.log(n_hacked.value);
+//console.log(Owner_input_username.value);
+//console.log(User_input_room_id.value);
+//console.log(User_input_username.value);
+//console.log(n_mem.value);
+//console.log(n_hacked.value);
 
 const roomID = inject("roomID");
 const password = inject("password");
-console.log(roomID);
-console.log(password);
+//console.log(roomID);
+//console.log(password);
 
 const socket = io()
-socket.emit("enterEvent",`${User_input_username.value}さんが入室しました。`)
+//socket.emit("enterEvent",`${User_input_username.value}さんが入室しました。`)
+//socket.emit("enterEvent",`${Owner_input_username.value}さんが入室しました。`)
+if (User_input_username.value !== '') {
+    socket.emit("publishEvent",`${User_input_username.value}さんが入室しました。`)
+  }
+else if (Owner_input_username.value !== '') {
+    socket.emit("publishEvent",`${Owner_input_username.value}さんが入室しました。`)
+}
+
 const chatContent = ref("")
 const chatList = reactive([])
 
@@ -30,8 +38,12 @@ onMounted(() => {
 
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
-  socket.emit("publishEvent",`${User_input_username.value}さん：${chatContent.value}`)
-  socket.emit("publishEvent",`${Owner_input_username.value}さん：${chatContent.value}`)
+  if (User_input_username.value !== '') {
+    socket.emit("publishEvent",`${User_input_username.value}さん：${chatContent.value}`)
+  }
+  else if (Owner_input_username.value !== '') {
+    socket.emit("publishEvent",`${Owner_input_username.value}さん：${chatContent.value}`)
+  }
   chatContent.value =""
 }
 
@@ -79,7 +91,9 @@ const registerSocketEvent = () => {
   <div class="mx-auto my-5 px-4">
     <h1 class="text-h3 font-weight-medium">Vue.js Chat チャットルーム</h1>
     <div class="mt-10">
-      <p>ログインユーザ：{{ Owner_input_username }}さん</p>
+      <p v-if="Owner_input_username !== ''">ログインユーザ：{{ Owner_input_username }}さん</p>
+      <p v-else-if="User_input_username">ログインユーザ：{{ User_input_username }}さん</p>
+      <p v-else>ログインユーザがいません。</p>
       <textarea variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area" v-model="chatContent"></textarea>
       <div class="mt-5">
         <button class="button-normal" @click="onPublish">投稿</button>
