@@ -1,6 +1,7 @@
 <script setup>
 import io from "socket.io-client";
 import { inject, onMounted, reactive, ref } from "vue";
+import axios from 'axios';
 
 const Owner_input_username = inject("Owner_input_username");
 const User_input_room_id = inject("User_input_room_id");
@@ -8,19 +9,27 @@ const User_input_username = inject("User_input_username");
 const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
 
-console.log(Owner_input_username.value);
-console.log(User_input_room_id.value);
-console.log(User_input_username.value);
-console.log(n_mem.value);
-console.log(n_hacked.value);
+//console.log(Owner_input_username.value);
+//console.log(User_input_room_id.value);
+//console.log(User_input_username.value);
+//console.log(n_mem.value);
+//console.log(n_hacked.value);
 
 const roomID = inject("roomID");
 const password = inject("password");
-console.log(roomID);
-console.log(password);
+//console.log(roomID);
+//console.log(password);
 
 const socket = io()
-socket.emit("enterEvent",`${User_input_username.value}さんが入室しました。`)
+//socket.emit("enterEvent",`${User_input_username.value}さんが入室しました。`)
+//socket.emit("enterEvent",`${Owner_input_username.value}さんが入室しました。`)
+if (User_input_username.value !== '') {
+    socket.emit("publishEvent",`${User_input_username.value}さんが入室しました。`)
+  }
+else if (Owner_input_username.value !== '') {
+    socket.emit("publishEvent",`${Owner_input_username.value}さんが入室しました。`)
+}
+
 const chatContent = ref("")
 const chatList = reactive([])
 
@@ -28,13 +37,78 @@ onMounted(() => {
   registerSocketEvent()
 })
 
+
+
+const onClose = async () => {
+  let response; // response を外部で宣言
+  try {
+    const data = {
+      mode: 'close_room',
+      data: {
+        room_id: parseInt(roomID.value), // 入力された部屋IDを整数に変換
+        owner_name: Owner_input_username.value, // 自分(オーナー)のユーザー名
+      },
+    };
+    // POSTリクエストを送信
+    response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    // レスポンスを処理
+    console.log('ステータスコード:', response.status);
+    console.log('レスポンスデータ:', response.data);
+  } catch (error) {
+    // エラーハンドリング
+    console.error('エラー:', error);
+  }
+  //if (response) {
+  //  // レスポンスデータから必要な情報を抽出
+  //  // 以下は例です。実際のデータ構造に合わせて変更してください。
+  //}
+};
+
+const onStart = async () => {
+  let response; // response を外部で宣言
+  try {
+    const data = {
+      mode: 'start_game',
+      data: {
+        room_id: Number(User_input_room_id.value), // 入力された部屋IDを整数に変換
+        owner_name: Owner_input_username.value, // 自分(オーナー)のユーザー名
+        n_hacked: Number(n_hacked.value), // Hackedの人数
+      },
+    };
+    // POSTリクエストを送信
+    response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    // レスポンスを処理
+    console.log('ステータスコード:', response.status);
+    console.log('レスポンスデータ:', response.data);
+  } catch (error) {
+    // エラーハンドリング
+    console.error('エラー:', error);
+  }
+  //if (response) {
+  //  // レスポンスデータから必要な情報を抽出
+  //  // 以下は例です。実際のデータ構造に合わせて変更してください。
+  //}
+};
+
+
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
-  socket.emit("publishEvent",`${User_input_username.value}さん：${chatContent.value}`)
-  socket.emit("publishEvent",`${Owner_input_username.value}さん：${chatContent.value}`)
+  if (User_input_username.value !== '') {
+    socket.emit("publishEvent",`${User_input_username.value}さん：${chatContent.value}`)
+  }
+  else if (Owner_input_username.value !== '') {
+    socket.emit("publishEvent",`${Owner_input_username.value}さん：${chatContent.value}`)
+  }
   chatContent.value =""
 }
-
 
 // 退室メッセージをサーバに送信する
 const onExit = () => {
@@ -79,10 +153,17 @@ const registerSocketEvent = () => {
   <div class="mx-auto my-5 px-4">
     <h1 class="text-h3 font-weight-medium">Vue.js Chat チャットルーム</h1>
     <div class="mt-10">
-      <p>ログインユーザ：{{ Owner_input_username }}さん</p>
+      <p v-if="Owner_input_username !== ''">ログインユーザ：{{ Owner_input_username }}さん</p>
+      <p v-else-if="User_input_username !==''">ログインユーザ：{{ User_input_username }}さん</p>
+      <p v-else>ログインユーザがいません。</p>
       <textarea variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area" v-model="chatContent"></textarea>
       <div class="mt-5">
         <button class="button-normal" @click="onPublish">投稿</button>
+        <button v-if="Owner_input_username !== ''" type="button" class="button-normal button-exit" @click="onClose">部屋を閉じる</button>
+        <button v-else-if="User_input_username !==''" type="button" class="button-normal button-exit" @click="onExit">退室する</button>
+      </div>
+      <div class="mt-5">
+        <button v-if="Owner_input_username !== ''" type="button" class="button-normal button-exit" @click="onStart">ゲームを開始する</button>
       </div>
       <div class="mt-5" v-if="chatList.length !== 0">
         <ul>
@@ -91,7 +172,6 @@ const registerSocketEvent = () => {
       </div>
     </div>
     <router-link to="/" class="link">
-      <button type="button" class="button-normal button-exit" @click="onExit">退室する</button>
     </router-link>
   </div>
 </template>
