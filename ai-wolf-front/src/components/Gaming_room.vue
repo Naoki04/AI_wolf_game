@@ -37,36 +37,44 @@ onMounted(() => {
   registerSocketEvent()
 })
 
-
-
-const onClose = async () => {
+const onInformation = async () => {
   let response; // response を外部で宣言
+  //console.log("ああああ")
+  
   try {
     const data = {
-      mode: 'close_room',
+      mode: 'get_room_info',
       data: {
-        room_id: parseInt(roomID.value), // 入力された部屋IDを整数に変換
-        owner_name: Owner_input_username.value, // 自分(オーナー)のユーザー名
+        "room_id": Number(roomID.value),
       },
     };
+
     // POSTリクエストを送信
     response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
+
     // レスポンスを処理
     console.log('ステータスコード:', response.status);
     console.log('レスポンスデータ:', response.data);
+    //Current_mem = response.data['Current_mem'];
+    //Members = response.data['Members'];
+    //console.log('現在の参加人数:', response.data['Current_mem']);
+    //console.log('参加者:', response.data['Members']);
   } catch (error) {
-    // エラーハンドリング
+  // エラーハンドリング
     console.error('エラー:', error);
   }
-  //if (response) {
-  //  // レスポンスデータから必要な情報を抽出
-  //  // 以下は例です。実際のデータ構造に合わせて変更してください。
-  //}
+  if (response) {
+    Current_mem.value = response.data['room_info']['Current_mem'];
+    Members.value = response.data['room_info']['Members'];
+    console.log('現在の参加人数:', Current_mem.value);
+    console.log('参加者:', Members.value);
+  }
 };
+
 
 const onStart = async () => {
   let response; // response を外部で宣言
@@ -98,6 +106,64 @@ const onStart = async () => {
   //}
 };
 
+
+const onClose = async () => {
+  let response; // response を外部で宣言
+  try {
+    const data = {
+      mode: 'close_room',
+      data: {
+        room_id: Number(roomID.value), // 入力された部屋IDを整数に変換
+        owner_name: Owner_input_username.value, // 自分(オーナー)のユーザー名
+      },
+    };
+    // POSTリクエストを送信
+    response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    // レスポンスを処理
+    console.log('ステータスコード:', response.status);
+    console.log('レスポンスデータ:', response.data);
+  } catch (error) {
+    // エラーハンドリング
+    console.error('エラー:', error);
+  }
+  //if (response) {
+  //  // レスポンスデータから必要な情報を抽出
+  //  // 以下は例です。実際のデータ構造に合わせて変更してください。
+  //}
+};
+
+
+const onEnd = async () => {
+  let response; // response を外部で宣言
+  try {
+    const data = {
+      mode: 'end_room',
+      data: {
+        room_id: Number(roomID.value), // 入力された部屋IDを整数に変換
+      },
+    };
+    // POSTリクエストを送信
+    response = await axios.post('https://mw2awrc6fa.execute-api.ap-northeast-3.amazonaws.com/default/ai_wolf', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    // レスポンスを処理
+    console.log('ステータスコード:', response.status);
+    console.log('レスポンスデータ:', response.data);
+  } catch (error) {
+    // エラーハンドリング
+    console.error('エラー:', error);
+  }
+  //if (response) {
+  //  // レスポンスデータから必要な情報を抽出
+  //  // 以下は例です。実際のデータ構造に合わせて変更してください。
+  //}
+};
 
 // 投稿メッセージをサーバに送信する
 const onPublish = () => {
@@ -151,7 +217,7 @@ const registerSocketEvent = () => {
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">Vue.js Chat チャットルーム</h1>
+    <h1 class="text-h3 font-weight-medium">AI狼</h1>
     <div class="mt-10">
       <p v-if="Owner_input_username !== ''">ログインユーザ：{{ Owner_input_username }}さん</p>
       <p v-else-if="User_input_username !==''">ログインユーザ：{{ User_input_username }}さん</p>
@@ -163,7 +229,8 @@ const registerSocketEvent = () => {
         <button v-else-if="User_input_username !==''" type="button" class="button-normal button-exit" @click="onExit">退室する</button>
       </div>
       <div class="mt-5">
-        <button v-if="Owner_input_username !== ''" type="button" class="button-normal button-exit" @click="onStart">ゲームを開始する</button>
+        <button v-if="Owner_input_username !== ''" type="button" class="button-normal button-exit" @click="onStart">ゲーム開始</button>
+        <button v-if="Owner_input_username !== ''" type="button" class="button-normal button-exit" @click="onEnd">ゲーム終了</button>
       </div>
       <div class="mt-5" v-if="chatList.length !== 0">
         <ul>

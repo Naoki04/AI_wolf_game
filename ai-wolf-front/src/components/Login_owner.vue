@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 import axios from 'axios';
 
 const router = useRouter();
+//ここで入力 Login_owner.vue
 const Owner_input_username = inject("Owner_input_username");
 const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
@@ -72,7 +73,6 @@ const onEnter_owner = async () => {
     router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
   };
 };
-  
 //const data = {
 //  "Issued_roomID": Issued_roomID,
 //  "Issued_password": Issued_password,
@@ -86,7 +86,6 @@ const onEnter_owner = async () => {
 //  console.log("allSubmit");
 //  router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
 //};
-
 </script>
 
 
