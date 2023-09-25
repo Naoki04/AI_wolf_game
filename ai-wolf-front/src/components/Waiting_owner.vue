@@ -13,11 +13,11 @@ const n_hacked = inject("n_hacked");
 //同期的に処理を行うために、ref()を用いていた
 let Current_mem = ref("");
 let Members = ref("");
+let GameState = ref("");
 
 const onInformation = async () => {
   let response; // response を外部で宣言
   //console.log("ああああ")
-  
   try {
     const data = {
       mode: 'get_room_info',
@@ -36,10 +36,6 @@ const onInformation = async () => {
     // レスポンスを処理
     console.log('ステータスコード:', response.status);
     console.log('レスポンスデータ:', response.data);
-    //Current_mem = response.data['Current_mem'];
-    //Members = response.data['Members'];
-    //console.log('現在の参加人数:', response.data['Current_mem']);
-    //console.log('参加者:', response.data['Members']);
   } catch (error) {
   // エラーハンドリング
     console.error('エラー:', error);
@@ -47,8 +43,10 @@ const onInformation = async () => {
   if (response) {
     Current_mem.value = response.data['room_info']['Current_mem'];
     Members.value = response.data['room_info']['Members'];
+    GameState.value = response.data['room_info']['GameState'];
     console.log('現在の参加人数:', Current_mem.value);
     console.log('参加者:', Members.value);
+    console.log('ゲームの状態:', GameState.value);
   }
 };
 
@@ -57,6 +55,7 @@ let intervalId;
 const stopUpdates = () => {
   // intervalIdをクリアしてsetIntervalを停止
   clearInterval(intervalId);
+  router.push({ name: "home" });
 };
 
 onMounted(() => {
@@ -115,7 +114,7 @@ onBeforeUnmount(() => {
       <p>参加者：{{ Members }}</p>
     </div>
     <div>
-      <button type="button" @click="stopUpdates" class="loginbtn loginbtn--shadow">更新停止</button>
+      <button type="button" @click="stopUpdates" class="loginbtn loginbtn--shadow">部屋を削除する</button>
     </div>
   </div> 
 </template>

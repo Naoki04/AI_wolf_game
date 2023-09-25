@@ -4,9 +4,9 @@ import { useRouter } from "vue-router";
 import axios from 'axios';
 
 const router = useRouter();
-const roomID = inject("roomID");
-const password = inject("password");
-const n_hacked = inject("n_hacked");
+//const roomID = inject("roomID");
+//const password = inject("password");
+//const n_hacked = inject("n_hacked");
 const emit = defineEmits();
 
 // レスポンスデータを保持するリファレンス

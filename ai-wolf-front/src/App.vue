@@ -22,14 +22,12 @@
 
   const roomID = ref();
   const password = ref("");
+  //emit　from Login_owner.vue
   const issued_event = (data) => {
     roomID.value = data["Issued_roomID"];
     password.value = data["Issued_password"];
-    //console.log(roomID);
-    //console.log(password);
-    //console.log("ああああ");
   };
-
+  //emit from Waiting_User.vue
   const user_send_event = (room_id) => {
     roomID.value = room_id;
   };
