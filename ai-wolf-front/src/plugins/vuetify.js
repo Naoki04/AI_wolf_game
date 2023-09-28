@@ -5,7 +5,7 @@ import * as directives from "vuetify/directives"
 
 const customTheme = {
   colors: {
-    primary: "#3498db",
+    primary: "#00001c",
   }
 }
 
