@@ -73,19 +73,6 @@ const onEnter_owner = async () => {
     router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
   };
 };
-//const data = {
-//  "Issued_roomID": Issued_roomID,
-//  "Issued_password": Issued_password,
-//}
-//console.log("submitIssued");
-//emit('Issued', data);
-
-//const allSubmit = () => {
-//  onEnter_owner();
-//  submitIssued();
-//  console.log("allSubmit");
-//  router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
-//};
 </script>
 
 

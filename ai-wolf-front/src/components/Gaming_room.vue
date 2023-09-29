@@ -120,7 +120,6 @@ const onStart = async () => {
     console.log('Hackedリスト:', Hacked.value);
     console.log("Hackedされた人は", N_hacked.value)  
   }
-  
 };
 
 const onEnd = async () => {
@@ -230,19 +229,20 @@ const onExit = () => {
   socket.emit("exitEvent", `${User_input_username.value}さんが退出しました。`)
 }
 
-const chatContent = ref("")
-const chatList = reactive([])
 // サーバから受信した入室メッセージ画面上に表示する
-const onReceiveEnter = (data) => {
-  chatList.unshift(data)
-}
+//const onReceiveEnter = (data) => {
+//  //chatList.unshift(data)
+//  chatList.push(data)
+//}
 // サーバから受信した退室メッセージを受け取り画面上に表示する
-const onReceiveExit = (data) => {
-  chatList.unshift(data)
-}
+//const onReceiveExit = (data) => {
+//  //chatList.unshift(data)
+//  chatList.push(data)
+//}
 // サーバから受信した投稿メッセージを画面上に表示する
 const onReceivePublish = (data) => {
-  chatList.unshift(data)
+  //chatList.unshift(data)
+  chatList.push(data)
 }
 // イベント登録をまとめる
 const registerSocketEvent = () => {
@@ -290,17 +290,17 @@ const onClose = async () => {
   router.push({ name: "home" });
 };
 
-
+const chatContent = ref("")
+const chatList = reactive([])
+//const isMemoDrawerOpen = ref(false);
 const isRoomInfoDrawerOpen = ref(false);
-const onInformationUpdate = () => {
-  onInformation();
-};
+//const onInformationUpdate = () => {
+//  onInformation();
+//};
 const toggleDrawer = () => {
   isRoomInfoDrawerOpen.value = !isRoomInfoDrawerOpen.value;
 };
 
-
-const isMemoDrawerOpen = ref(false);
 </script>
 
 <template>
@@ -312,55 +312,63 @@ const isMemoDrawerOpen = ref(false);
         <v-icon>mdi-menu</v-icon>
       </v-btn>
       <v-toolbar-title>AI狼</v-toolbar-title>
+      <div class="header-right">
+        <p v-if="Owner_input_username !== ''">ログインユーザ：{{ Owner_input_username }}さん</p>
+        <p v-else-if="User_input_username !==''">ログインユーザ：{{ User_input_username }}さん</p>
+        <p v-else>ログインユーザがいません。</p>
+      </div>
     </v-app-bar>
-
-    <v-navigation-drawer app v-model="isRoomInfoDrawerOpen" clipped location="left">
+    <v-navigation-drawer app temporary v-model="isRoomInfoDrawerOpen" clipped location="left">
       <v-container>
         <!-- サイドバーのコンテンツ -->
         <div class="room-info-container">
           <h1 class="room-info-title">ルーム情報</h1>
           <div class="room-info">
-            <p class="room-info-item">作成日時: {{ Created_at }}</p>
             <p class="room-info-item">参加人数: {{ N_mem }}</p>
-            <p class="room-info-item">現在の参加人数: {{ Current_mem }}</p>
-            <p class="room-info-item">参加者リスト: {{ Members }}</p>
             <p class="room-info-item">Hackedの人数: {{ N_hacked }}</p>
-            <p class="room-info-item">Hackedリスト: {{ Hacked }}</p>
-            <p class="room-info-item">死亡者リスト: {{ Dead }}</p>
-            <p class="room-info-item">ゲームの状態: {{ GameState }}</p>
+            <p class="room-info-item">参加者リスト: 
+              <br>
+              <span v-for="member in Members" :key="member">
+                {{ member }}
+                <br>
+              </span>
+            </p>
+            <p class="room-info-item">死亡者リスト: 
+              <br>
+              <span v-for="dead in Dead" :key="dead">
+                {{ dead }}さん
+                <br>
+              </span>
+            </p>
           </div>
           <button class="update-button" @click="updateInformation">情報を更新</button>
         </div>
+        <div class="button-container">
+          <button v-if="Owner_input_username !== ''" class="button-normal button-side-bar" @click="onClose">部屋を閉じる</button>
+          <button v-else class="button-normal button-side-bar" @click="onExit">退室する</button>
+        </div>
       </v-container>
     </v-navigation-drawer>
-    <!--<v-app-bar app dark color="primary">
-      <v-app-bar-nav-icon variant="text" @click.stop="isRoomInfoDrawerOpen = !isRoomInfoDrawerOpen"
-        icon="mdi-menu"></v-app-bar-nav-icon>
-      <v-spacer></v-spacer>
-    </v-app-bar>-->
 <!-- content -->
     <div class="mx-auto my-5 px-4">
+      <div class="mt-5" v-if="chatList.length !== 0">
+        <ul>
+          <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
+        </ul>
+      </div>
       <div class="mt-10">
-        <p v-if="Owner_input_username !== ''">ログインユーザ：{{ Owner_input_username }}さん</p>
-        <p v-else-if="User_input_username !==''">ログインユーザ：{{ User_input_username }}さん</p>
-        <p v-else>ログインユーザがいません。</p>
-        <textarea variant="outlined" placeholder="投稿文を入力してください" rows="4" class="area" v-model="chatContent"></textarea>
+        <p>ゲーム進行</p>
         <div class="mt-5">
-          <button class="button-normal" @click="onPublish">回答</button>
-          <button class="button-normal" @click="onGetAiAnswer">質問</button>
+          <div class="input-container">
+            <textarea variant="outlined" placeholder="回答or質問を入力してください" rows="2" class="area" v-model="chatContent"></textarea>
+            <div class="bottons">
+              <button class="button-normal button-content" @click="onPublish">回答</button>
+              <button class="button-normal button-content" @click="onGetAiAnswer">質問</button>
+            </div>
+          </div>
         </div>
         <div class="mt-5">
-          <button v-if="Owner_input_username !== ''" type="button" class="button-normal button-exit" @click="onClose">部屋を閉じる</button>
-          <button v-else-if="User_input_username !==''" type="button" class="button-normal button-exit" @click="onExit">退室する</button>
-        </div>
-        <div class="mt-5">
-          <button v-if="Owner_input_username !== ''" type="button" class="button-normal button-exit" @click="onStart">ゲーム開始</button>
-          <button v-if="Owner_input_username !== ''" type="button" class="button-normal button-exit" @click="onEnd">ゲーム終了</button>
-        </div>
-        <div class="mt-5" v-if="chatList.length !== 0">
-          <ul>
-            <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
-          </ul>
+          <button v-if="Owner_input_username !== ''" class="button-normal" @click="onStart">ゲーム開始</button>
         </div>
       </div>
       <router-link to="/" class="link">
@@ -370,10 +378,13 @@ const isMemoDrawerOpen = ref(false);
 </template>
 
 <style scoped>
-/*v-app-bar*/
 .v-app-bar {
   background-color: #02194e;
   color: #ffffff;
+}
+.header-right{
+  position: absolute;
+  right: 20px;
 }
 .room-info-container {
   background-color: #f0f0f0;
@@ -390,6 +401,12 @@ const isMemoDrawerOpen = ref(false);
 
 .room-info {
   margin-bottom: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: left; /* すべての内容を左寄せに */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .room-info-item {
@@ -416,12 +433,25 @@ const isMemoDrawerOpen = ref(false);
 }
 
 .area {
-  width: 100%;
+  width: 200%;
   margin: 16px 0;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  outline: none;
+  resize: none;
+  font-size: 16px;
+  flex: 1; /* ボタンを横方向に中央に配置 */
 }
-
+.button-container {
+  position: fixed;
+  bottom: 0;
+  width: 88%;
+  text-align: center; /* ボタンを横方向に中央に配置 */
+}
 .button-normal {
   background-color: #02194e;
+  text-align: center; /* ボタンを横方向に中央に配置 */
   color: white;
   border: none;
   padding: 10px 15px;
@@ -431,10 +461,38 @@ const isMemoDrawerOpen = ref(false);
   border-radius: 5px;
   outline: none;
 }
-
-.button-exit {
-  /*background-color: #ff3333;*/
-  margin-left: 40px
+/* ボタンを一番下に配置したい*/
+.button-side-bar {
+  background-color: #02194e;
+  text-align: center; /* ボタンを横方向に中央に配置 */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  outline: none;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.button-content {
+  background-color: #02194e;
+  text-align: center; /* ボタンを横方向に中央に配置 */
+  color: white;
+  padding: 2px 5px;
+  font-size: 16px;
+  border-radius: 5px;
+  outline: none;
+  width: 80%;
+  margin-bottom: 5px;
+}
+.input-container {
+  display: flex;
+  align-items: center;
+}
+.bottons{
+  margin-left: 10px;
 }
 
 .link {
