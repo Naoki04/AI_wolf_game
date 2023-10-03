@@ -151,6 +151,7 @@ const onEnter_user = async () => {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
+  /*border: 1px solid #888;*/
   margin-bottom: 16px;
   width: 200px;
 }
