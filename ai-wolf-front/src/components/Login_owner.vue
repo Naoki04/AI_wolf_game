@@ -73,19 +73,6 @@ const onEnter_owner = async () => {
     router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
   };
 };
-//const data = {
-//  "Issued_roomID": Issued_roomID,
-//  "Issued_password": Issued_password,
-//}
-//console.log("submitIssued");
-//emit('Issued', data);
-
-//const allSubmit = () => {
-//  onEnter_owner();
-//  submitIssued();
-//  console.log("allSubmit");
-//  router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
-//};
 </script>
 
 
@@ -130,5 +117,41 @@ const onEnter_owner = async () => {
 
 .loginbtn--shadow {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.container {
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+}
+
+.button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.error-message {
+  color: #ff0000;
+  margin-top: 10px;
+}
+
+.error-details {
+  margin-top: 10px;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
 }
 </style>
