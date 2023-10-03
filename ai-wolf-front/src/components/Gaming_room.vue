@@ -318,6 +318,7 @@ const toggleDrawer = () => {
         <p v-else>ログインユーザがいません。</p>
       </div>
     </v-app-bar>
+<!-- サイドバー -->
     <v-navigation-drawer app temporary v-model="isRoomInfoDrawerOpen" clipped location="left">
       <v-container>
         <!-- サイドバーのコンテンツ -->
@@ -361,14 +362,14 @@ const toggleDrawer = () => {
         <div class="mt-5">
           <div class="input-container">
             <textarea variant="outlined" placeholder="回答or質問を入力してください" rows="2" class="area" v-model="chatContent"></textarea>
-            <div class="bottons">
+            <div class="button-left">
               <button class="button-normal button-content" @click="onPublish">回答</button>
               <button class="button-normal button-content" @click="onGetAiAnswer">質問</button>
             </div>
+            <div class="buttons-right">
+              <button v-if="Owner_input_username !== ''" class="button-normal button-content" @click="onGetAiAnswer">ゲーム開始</button>
+            </div>
           </div>
-        </div>
-        <div class="mt-5">
-          <button v-if="Owner_input_username !== ''" class="button-normal" @click="onStart">ゲーム開始</button>
         </div>
       </div>
       <router-link to="/" class="link">
@@ -491,8 +492,12 @@ const toggleDrawer = () => {
   display: flex;
   align-items: center;
 }
-.bottons{
-  margin-left: 10px;
+.button-left {
+  margin-left: 8px;
+}
+.button-right {
+  margin-right: 8px;
+  
 }
 
 .link {
