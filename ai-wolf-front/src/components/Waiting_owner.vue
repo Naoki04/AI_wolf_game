@@ -68,7 +68,7 @@ onMounted(() => {
       console.log("ゲーム開始");
       router.push({ name: "gaming_room", params: { roomID: roomID.value } });
     };
-  }, 30000);
+  }, 3000);
 });
 //
 //if (Current_mem.value === n_mem.value) {
@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">オーナー待機室</h1>
+    <h1 class="text-h3 font-weight-medium">ゲーム開始まで少々お待ちください。</h1>
   </div> 
   <div class="mx-auto my-5 px-4">
     <div>

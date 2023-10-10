@@ -1,6 +1,6 @@
 <script setup>
 import io from "socket.io-client";
-import { inject, onMounted, reactive, ref } from "vue";
+import { inject, onMounted, reactive, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from 'axios';
 
@@ -21,8 +21,6 @@ else if (Owner_input_username.value !== '') {
     socket.emit("publishEvent",`${Owner_input_username.value}さんが入室しました。`)
 }
 
-
-
 //get_room_infoで取得した値を格納する変数
 let Created_at = ref("");
 const N_mem = ref("");
@@ -40,7 +38,6 @@ let AI_answer = ref("");
 
 const onInformation = async () => {
   let response; // response を外部で宣言
-  console.log("ああああ")
   try {
     const data = {
       mode: 'get_room_info',
@@ -150,7 +147,6 @@ const onEnd = async () => {
   //}
 };
 
-
 const onGetAiAnswer = async () => {
   let response; // response を外部で宣言
   try {
@@ -241,8 +237,8 @@ const onExit = () => {
 //}
 // サーバから受信した投稿メッセージを画面上に表示する
 const onReceivePublish = (data) => {
-  //chatList.unshift(data)
-  chatList.push(data)
+  chatList.unshift(data)
+  //chatList.push(data)
 }
 // イベント登録をまとめる
 const registerSocketEvent = () => {
@@ -292,20 +288,63 @@ const onClose = async () => {
 
 const chatContent = ref("")
 const chatList = reactive([])
-//const isMemoDrawerOpen = ref(false);
 const isRoomInfoDrawerOpen = ref(false);
-//const onInformationUpdate = () => {
-//  onInformation();
-//};
+
 const toggleDrawer = () => {
   isRoomInfoDrawerOpen.value = !isRoomInfoDrawerOpen.value;
 };
 
+// chatListに新しい要素を追加する例
+function addMessage(message) {
+  chatList.push(message);
+}
+
+// 何らかのイベントや関数でchatListに新しいメッセージを追加する
+addMessage('質問を投稿してください。');
+console.log("chatListの中身:", chatList)
+
+const answerList = reactive([
+  {
+      question: "質問1",
+    answers: [
+      ["user1", "回答1"],
+      ["user2", "回答2"],
+    ],
+  },
+  {
+    question: "質問2",
+    answers: [
+      ["user1", "回答3"],
+      ["user2", "回答4"],
+    ],
+  },
+  {
+    question: "質問3",
+    answers: [
+      ["user1", "回答5"],
+    ],
+  },
+  // 他の質問も同様に追加できます
+]);
+
+const addAnswer = (questionIndex, username, answer) => {
+  if (answerList[questionIndex]) {
+    answerList[questionIndex].answers.push([username, answer]);
+  } else {
+    console.error(`質問 ${questionIndex} が定義されていません。`);
+  }
+};
+addAnswer(0, "user3", "回答6");
+console.log("answerListの中身:", answerList)
+console.log("answerList[0].answersの中身:", answerList[0].answers)
+console.log("answerList[0].answers[0]の中身:", answerList[0].answers[0])
+console.log("answerList[0].answers[0][0]の中身:", answerList[0].answers[0][0])
+console.log("answerList[0].answers[0][1]の中身:", answerList[0].answers[0][1])
 </script>
 
 <template>
   <v-app>
-<!-- ヘッダー -->
+    <!-- ヘッダー -->
     <v-app-bar app dark color="primary">
       <!-- ハンバーガーメニューボタン -->
       <v-btn icon @click="toggleDrawer">
@@ -350,35 +389,73 @@ const toggleDrawer = () => {
         </div>
       </v-container>
     </v-navigation-drawer>
-<!-- content -->
-    <div class="mx-auto my-5 px-4">
-      <div class="mt-5" v-if="chatList.length !== 0">
-        <ul>
-          <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
-        </ul>
-      </div>
-      <div class="mt-10">
-        <p>ゲーム進行</p>
-        <div class="mt-5">
-          <div class="input-container">
-            <textarea variant="outlined" placeholder="回答or質問を入力してください" rows="2" class="area" v-model="chatContent"></textarea>
-            <div class="button-left">
-              <button class="button-normal button-content" @click="onPublish">回答</button>
-              <button class="button-normal button-content" @click="onGetAiAnswer">質問</button>
-            </div>
-            <div class="buttons-right">
-              <button v-if="Owner_input_username !== ''" class="button-normal button-content" @click="onGetAiAnswer">ゲーム開始</button>
+    <!-- 上側のブロック -->
+    <v-row class="fill-height">
+      <v-col cols="12" class="top-block">
+        <!-- 上側のコンテンツをここに配置 -->
+        <div class="left-block">
+          <!--ユーザーの解答をそれぞれ表示する-->
+          <div v-for="(answer, index) in answerList" :key="index">
+            <div class="chatitem" :class="{ 'my-message': answer[0] === User_input_username, 'other-message': answer[0] !== User_input_username }">
+              <p>{{ answerList[0].answers[0][0] }}さんの回答</p>
+              <p>{{ answerList[0].answers[0][1] }}</p>
             </div>
           </div>
         </div>
-      </div>
-      <router-link to="/" class="link">
-      </router-link>
-    </div>
+      </v-col>
+    </v-row>
+    <!-- 下側のブロック -->
+    <v-row class="fill-height">
+      <v-col cols="12" class="bottom-block">
+        <!-- 下側のコンテンツをここに配置 -->
+        <div class="right-block mx-auto my-5 px-4">
+          <!-- 右側のコンテンツをここに配置 -->
+          <div>
+            <div class="game-progress">
+              <p class="game-progress-title">ゲーム進行</p>
+              <ul class="game-progress-content">
+                <li v-if="chatList.length > 0">{{ chatList[chatList.length - 1] }}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mt-10">
+            <div class="mt-5">
+              <div class="input-container">
+                <textarea variant="outlined" placeholder="回答or質問を入力してください" rows="2" class="area" v-model="chatContent"></textarea>
+                <div class="button-left">
+                  <button class="button-normal button-content" @click="onPublish">回答</button>
+                  <button class="button-normal button-content" @click="onGetAiAnswer">質問</button>
+                </div>
+                <div class="buttons-right">
+                  <button v-if="Owner_input_username !== ''" class="button-normal button-content" @click="onStart">ゲーム開始</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
   </v-app>
 </template>
 
 <style scoped>
+.fill-height {
+  height: 50vh; /* 画面の高さの半分にブロックを広げる */
+  background-color: #f0f0f0; /* 左側のブロックの背景色 */
+  padding: 80px;
+}
+
+.top-block {
+  background-color: #f0f0f0; /* 上側のブロックの背景色 */
+  height: 100%; /* ブロックを親要素の高さいっぱいに広げる */
+  padding: 70px;
+}
+
+.bottom-block {
+  background-color: #ffffff; /* 下側のブロックの背景色 */
+  height: 100%; /* ブロックを親要素の高さいっぱいに広げる */
+  padding: 70px;
+}
 .v-app-bar {
   background-color: #02194e;
   color: #ffffff;
@@ -386,6 +463,8 @@ const toggleDrawer = () => {
 .header-right{
   position: absolute;
   right: 20px;
+  font-size: 16px;
+  font-weight: bold;
 }
 .room-info-container {
   background-color: #f0f0f0;
@@ -537,11 +616,50 @@ const toggleDrawer = () => {
   cursor: pointer;
   border-radius: 5px;
   margin-right: 10px;
-  outline: none;
+  outline: none
 }
-
 .selected-room {
   background-color: #f0f0f0;
   color: #04aa6d;
+}
+.game-progress {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.game-progress-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.game-progress-content {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  list-style: none;
+  padding: 0;
+}
+
+.game-progress-content li {
+  margin-bottom: 10px;
+}
+
+.game-progress-content li:last-child {
+  margin-bottom: 0;
+}
+
+.chatitem {
+  list-style: none;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  word-wrap: break-word;
+  background-color: #f9f9f9;
 }
 </style>
