@@ -207,17 +207,6 @@ const onAddDead = async () => {
   Dead_user.value = input()
 };
 
-// 投稿メッセージをサーバに送信する
-const onPublish = () => {
-  if (User_input_username.value !== '') {
-    socket.emit("publishEvent",`${User_input_username.value}さん：${chatContent.value}`)
-  }
-  else if (Owner_input_username.value !== '') {
-    socket.emit("publishEvent",`${Owner_input_username.value}さん：${chatContent.value}`)
-  }
-  chatContent.value =""
-}
-
 // 退室メッセージをサーバに送信する
 const onExit = () => {
   router.push({ name: "home" })
@@ -302,7 +291,7 @@ function addMessage(message) {
 // 何らかのイベントや関数でchatListに新しいメッセージを追加する
 addMessage('質問を投稿してください。');
 console.log("chatListの中身:", chatList)
-
+let count = ref(1)
 const answerList = reactive([
   {
       question: "質問1",
@@ -311,21 +300,18 @@ const answerList = reactive([
       ["user2", "回答2"],
     ],
   },
-  {
-    question: "質問2",
-    answers: [
-      ["user1", "回答3"],
-      ["user2", "回答4"],
-    ],
-  },
-  {
-    question: "質問3",
-    answers: [
-      ["user1", "回答5"],
-    ],
-  },
-  // 他の質問も同様に追加できます
 ]);
+
+// 投稿メッセージをサーバに送信する
+const onPublish = () => {
+  if (User_input_username.value !== '') {
+    socket.emit("publishEvent",`${User_input_username.value}さん：${chatContent.value}`)
+  }
+  else if (Owner_input_username.value !== '') {
+    socket.emit("publishEvent",`${Owner_input_username.value}さん：${chatContent.value}`)
+  }
+  chatContent.value =""
+}
 
 const addAnswer = (questionIndex, username, answer) => {
   if (answerList[questionIndex]) {
@@ -389,17 +375,42 @@ console.log("answerList[0].answers[0][1]の中身:", answerList[0].answers[0][1]
         </div>
       </v-container>
     </v-navigation-drawer>
-    <!-- 上側のブロック -->
-    <v-row class="fill-height">
+    <!-- 上側のブロック（5人以下）-->
+    <v-row v-if="Current_mem<=5" class="fill-height">
       <v-col cols="12" class="top-block">
-        <!-- 上側のコンテンツをここに配置 -->
-        <div class="left-block">
-          <!--ユーザーの解答をそれぞれ表示する-->
-          <div v-for="(answer, index) in answerList" :key="index">
+        <!--ユーザーの解答をそれぞれ表示する-->
+        <div v-for="(answer, index) in answerList" :key="index">
+          <div class="chatitem" :class="{ 'my-message': answer[0] === User_input_username, 'other-message': answer[0] !== User_input_username }">
+            <p>{{ answerList[0].answers[0][0] }}さんの回答   :   {{ answerList[0].answers[0][1] }}</p>
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+    <!--  6人以上　-->
+    <v-row v-if="Current_mem>5" class="fill-height">
+      <v-col cols="6" class="top-block">
+        <div class="left-block mx-auto my-5 px-4">
+          <!-- 左側のコンテンツをここに配置 -->
+          <div>
+            <div v-for="(answer, index) in answerList" :key="index">
             <div class="chatitem" :class="{ 'my-message': answer[0] === User_input_username, 'other-message': answer[0] !== User_input_username }">
               <p>{{ answerList[0].answers[0][0] }}さんの回答</p>
               <p>{{ answerList[0].answers[0][1] }}</p>
             </div>
+          </div>
+          </div>
+        </div>
+      </v-col>
+      <!-- 右側のブロック -->
+      <v-col cols="6">
+        <div class="right-block mx-auto my-5 px-4">
+          <div>
+            <div v-for="(answer, index) in answerList" :key="index">
+            <div class="chatitem" :class="{ 'my-message': answer[0] === User_input_username, 'other-message': answer[0] !== User_input_username }">
+              <p>{{ answerList[0].answers[0][0] }}さんの回答</p>
+              <p>{{ answerList[0].answers[0][1] }}</p>
+            </div>
+          </div>
           </div>
         </div>
       </v-col>
@@ -408,7 +419,7 @@ console.log("answerList[0].answers[0][1]の中身:", answerList[0].answers[0][1]
     <v-row class="fill-height">
       <v-col cols="12" class="bottom-block">
         <!-- 下側のコンテンツをここに配置 -->
-        <div class="right-block mx-auto my-5 px-4">
+        <div class="mx-auto my-5 px-4">
           <!-- 右側のコンテンツをここに配置 -->
           <div>
             <div class="game-progress">
@@ -439,21 +450,50 @@ console.log("answerList[0].answers[0][1]の中身:", answerList[0].answers[0][1]
 </template>
 
 <style scoped>
-.fill-height {
-  height: 50vh; /* 画面の高さの半分にブロックを広げる */
-  background-color: #f0f0f0; /* 左側のブロックの背景色 */
-  padding: 80px;
+body, html {
+  height: 100%; /* ページ全体の高さを100%に設定 */
+  margin: 0; /* マージンをリセットして余白を削除 */
+  padding: 0; /* パディングをリセットして余白を削除 */
+  overflow: hidden; /* スクロールを無効にする */
 }
 
+.fill-height {
+  height: 100%; /* ページ全体の高さを100%に設定 */
+  display: flex;
+  flex-direction: column; /* 子要素を縦方向に並べる */
+}
 .top-block {
+  margin: 80px 0px 0px 0px;
+  height: 100vh; /* 画面の高さいっぱいにブロックを広げる */
   background-color: #f0f0f0; /* 上側のブロックの背景色 */
-  height: 100%; /* ブロックを親要素の高さいっぱいに広げる */
-  padding: 70px;
+  flex: 1 1 30%; /* 上側のブロックが残りの高さを占める */
+  padding: 0px;
+  border: 80px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  overflow: auto; /* コンテンツがはみ出した場合にスクロールバーを表示 */
 }
 
 .bottom-block {
   background-color: #ffffff; /* 下側のブロックの背景色 */
-  height: 100%; /* ブロックを親要素の高さいっぱいに広げる */
+  flex: 1; /* 下側のブロックが残りの高さを占める */
+  padding: 50px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: auto; /* コンテンツがはみ出した場合にスクロールバーを表示 */
+  /*下の空白をなくす*/
+  margin-bottom: 100px;
+}
+.left-block {
+  height: 100vh; /* 画面の高さいっぱいにブロックを広げる */
+  background-color: #f0f0f0; /* 左側のブロックの背景色 */
+  padding: 70px;
+}
+
+.right-block {
+  height: 100vh; /* 画面の高さいっぱいにブロックを広げる */
+  background-color: #f0f0f0; /* 右側のブロックの背景色 */
   padding: 70px;
 }
 .v-app-bar {
