@@ -21,8 +21,6 @@ else if (Owner_input_username.value !== '') {
     socket.emit("publishEvent",`${Owner_input_username.value}さんが入室しました。`)
 }
 
-
-
 //get_room_infoで取得した値を格納する変数
 let Created_at = ref("");
 const N_mem = ref("");
@@ -241,8 +239,8 @@ const onExit = () => {
 //}
 // サーバから受信した投稿メッセージを画面上に表示する
 const onReceivePublish = (data) => {
-  //chatList.unshift(data)
-  chatList.push(data)
+  chatList.unshift(data)
+  //chatList.push(data)
 }
 // イベント登録をまとめる
 const registerSocketEvent = () => {
@@ -300,9 +298,7 @@ const isRoomInfoDrawerOpen = ref(false);
 const toggleDrawer = () => {
   isRoomInfoDrawerOpen.value = !isRoomInfoDrawerOpen.value;
 };
-
 </script>
-
 
 <template>
   <v-app>
@@ -319,79 +315,93 @@ const toggleDrawer = () => {
         <p v-else>ログインユーザがいません。</p>
       </div>
     </v-app-bar>
-    <!-- 左側のドロワー -->
+<!-- サイドバー -->
     <v-navigation-drawer app temporary v-model="isRoomInfoDrawerOpen" clipped location="left">
-      <!-- ドロワーの中身 -->
       <v-container>
-        <!-- ルーム情報 -->
-        <v-row class="mb-5">
-          <v-col cols="12">
-            <div class="room-info-container">
-              <h1 class="room-info-title">ルーム情報</h1>
-              <div class="room-info">
-                <p class="room-info-item">参加人数: {{ N_mem }}</p>
-                <p class="room-info-item">Hackedの人数: {{ N_hacked }}</p>
-                <p class="room-info-item">参加者リスト: 
-                  <br>
-                  <span v-for="member in Members" :key="member">
-                    {{ member }}
-                  <br>
-                </span>
-              </p>
-              <p class="room-info-item">死亡者リスト: 
+        <!-- サイドバーのコンテンツ -->
+        <div class="room-info-container">
+          <h1 class="room-info-title">ルーム情報</h1>
+          <div class="room-info">
+            <p class="room-info-item">参加人数: {{ N_mem }}</p>
+            <p class="room-info-item">Hackedの人数: {{ N_hacked }}</p>
+            <p class="room-info-item">参加者リスト: 
+              <br>
+              <span v-for="member in Members" :key="member">
+                {{ member }}
                 <br>
-                <span v-for="dead in Dead" :key="dead">
-                  {{ dead }}さん
-                  <br>
-                </span>
-              </p>
-            </div>
-            <button class="update-button" @click="updateInformation">情報を更新</button>
-            </div>
-          </v-col>
-        </v-row>
-        <!-- ボタンコンテナ -->
-        <v-row>
-          <v-col cols="12">
-            <div class="button-container">
-              <button v-if="Owner_input_username !== ''" class="button-normal button-side-bar" @click="onClose">部屋を閉じる</button>
-              <button v-else class="button-normal button-side-bar" @click="onExit">退室する</button>
-            </div>
-          </v-col>
-        </v-row>
+              </span>
+            </p>
+            <p class="room-info-item">死亡者リスト: 
+              <br>
+              <span v-for="dead in Dead" :key="dead">
+                {{ dead }}さん
+                <br>
+              </span>
+            </p>
+          </div>
+          <button class="update-button" @click="updateInformation">情報を更新</button>
+        </div>
+        <div class="button-container">
+          <button v-if="Owner_input_username !== ''" class="button-normal button-side-bar" @click="onClose">部屋を閉じる</button>
+          <button v-else class="button-normal button-side-bar" @click="onExit">退室する</button>
+        </div>
       </v-container>
     </v-navigation-drawer>
-
-    <!-- 右側のコンテンツ -->
-    <v-container class="mx-auto my-5 px-4">
-      <!-- チャット表示エリア -->
-      <v-row class="mt-5" v-if="chatList.length !== 0">
-        <v-col cols="12">
-          <ul>
-            <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
-          </ul>
-        </v-col>
-      </v-row>
-
-      <!-- ゲーム進行エリア -->
-      <v-row class="mt-10">
-        <v-col cols="12">
-          <p>ゲーム進行</p>
-          <div class="mt-5">
-            <div class="input-container">
-              <!-- ...（省略）... -->
+    <!-- 左側のブロック -->
+    <v-row>
+      <v-col cols="6">
+        <div class="left-block">
+          <!-- 左側のコンテンツをここに配置 -->
+          <div class="mt-5" v-if="chatList.length !== 0">
+            <ul>
+              <li class="item mt-4">こんにちは</li>
+            </ul>
+          </div>
+        </div>
+      </v-col>
+      <!-- 右側のブロック -->
+      <v-col cols="6">
+        <div class="right-block mx-auto my-5 px-4">
+          <!-- 右側のコンテンツをここに配置 -->
+          <div class="mt-5" v-if="chatList.length !== 0">
+            <ul>
+              <li class="item mt-4" v-for="(chat, i) in chatList" :key="i">{{ chat }}</li>
+            </ul>
+          </div>
+          <div class="mt-10">
+            <p>ゲーム進行</p>
+            <div class="mt-5">
+              <div class="input-container">
+                <textarea variant="outlined" placeholder="回答or質問を入力してください" rows="2" class="area" v-model="chatContent"></textarea>
+                <div class="button-left">
+                  <button class="button-normal button-content" @click="onPublish">回答</button>
+                  <button class="button-normal button-content" @click="onGetAiAnswer">質問</button>
+                </div>
+                <div class="buttons-right">
+                  <button v-if="Owner_input_username !== ''" class="button-normal button-content" @click="onGetAiAnswer">ゲーム開始</button>
+                </div>
+              </div>
             </div>
           </div>
-        </v-col>
-      </v-row>
-
-      <router-link to="/" class="link"></router-link>
-    </v-container>
+        </div>
+      </v-col>
+    </v-row>
   </v-app>
 </template>
 
-
 <style scoped>
+.left-block {
+  height: 100vh; /* 画面の高さいっぱいにブロックを広げる */
+  background-color: #f0f0f0; /* 左側のブロックの背景色 */
+  padding: 70px;
+}
+
+.right-block {
+  height: 100vh; /* 画面の高さいっぱいにブロックを広げる */
+  background-color: #ffffff; /* 右側のブロックの背景色 */
+  padding: 70px;
+}
+
 .v-app-bar {
   background-color: #02194e;
   color: #ffffff;
@@ -399,6 +409,8 @@ const toggleDrawer = () => {
 .header-right{
   position: absolute;
   right: 20px;
+  font-size: 16px;
+  font-weight: bold;
 }
 .room-info-container {
   background-color: #f0f0f0;
@@ -550,7 +562,7 @@ const toggleDrawer = () => {
   cursor: pointer;
   border-radius: 5px;
   margin-right: 10px;
-  outline: none;
+  outline: none
 }
 
 .selected-room {

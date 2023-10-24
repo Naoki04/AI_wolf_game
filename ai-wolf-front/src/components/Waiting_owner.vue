@@ -2,6 +2,7 @@
 import { inject, ref, onBeforeUnmount, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import axios from 'axios';
+//import { useClipboard } from 'vuetify';
 
 const router = useRouter();
 const roomID = inject("roomID");
@@ -68,13 +69,8 @@ onMounted(() => {
       console.log("ゲーム開始");
       router.push({ name: "gaming_room", params: { roomID: roomID.value } });
     };
-  }, 30000);
+  }, 3000);
 });
-//
-//if (Current_mem.value === n_mem.value) {
-//  console.log("ゲーム開始");
-//  router.push({ name: "gaming_room", params: { roomID: roomID.value} });
-//}
 
 //このコードではintervalId変数を使用して
 //setIntervalのIDを保持し
@@ -85,38 +81,56 @@ onBeforeUnmount(() => {
   // コンポーネントがアンマウントされたときにintervalIdをクリアしてsetIntervalを停止
   clearInterval(intervalId);
 });
+
+const writeToClipboard = (text) => {
+  navigator.clipboard.writeText(text).catch((e) => {
+    console.error(e);
+  });
+};
 </script>
 
 <template>
-  <div class="mx-auto my-5 px-4">
-    <h1 class="text-h3 font-weight-medium">オーナー待機室</h1>
-  </div> 
-  <div class="mx-auto my-5 px-4">
-    <div>
-      <h1 class="text-h3 font-weight-medium"></h1>
-      <p>ルームID: {{ roomID }}です。</p>
-    </div>
-    <div>
-      <h1 class="text-h3 font-weight-medium"></h1>
-      <p>パスワード: {{ password }}です。</p>
-    </div>
-    <div>
-      <h1 class="text-h3 font-weight-medium"></h1>
-      <p>メンバー数: {{ n_mem }}人</p>
-    </div>
-    <div>
-      <h1 class="text-h3 font-weight-medium"></h1>
-      <p>ハックされた人数: {{ n_hacked }}人</p>
-    </div>
-    <div>
-      <p>参加者予定数：{{ n_mem }}</p>
-      <p>現在の参加者数：{{ Current_mem }}</p>
-      <p>参加者：{{ Members }}</p>
-    </div>
-    <div>
-      <button type="button" @click="stopUpdates" class="loginbtn loginbtn--shadow">部屋を削除する</button>
-    </div>
-  </div> 
+  <v-app>
+    <v-container fluid>
+      <v-row>
+        <v-col cols="6">
+          <v-row>
+            <v-col class="mx-auto my-5 px-4">
+              <h1 class="text-h3 font-weight-medium">ゲーム開始まで少々お待ちください。</h1>
+            </v-col>
+            <v-col cols="9">
+              <p>ルームID: {{ roomID }}</p>
+            </v-col>
+            <v-col cols="1">
+              <v-btn class="copy-btn" @click="writeToClipboard(roomID)">COPY</v-btn>
+            </v-col>
+            <v-col cols="9">
+              <p>パスワード: {{ password }}</p>
+            </v-col>
+            <v-col cols="1">
+              <v-btn class="copy-btn" @click="writeToClipboard(password)">COPY</v-btn>
+            </v-col>
+            <div>
+              <h1 class="text-h3 font-weight-medium"></h1>
+              <p>メンバー数: {{ n_mem }}人</p>
+            </div>
+            <div>
+              <h1 class="text-h3 font-weight-medium"></h1>
+              <p>ハックされた人数: {{ n_hacked }}人</p>
+            </div>
+            <div>
+              <p>参加者予定数：{{ n_mem }}</p>
+              <p>現在の参加者数：{{ Current_mem }}</p>
+              <p>参加者：{{ Members }}</p>
+            </div>
+            <div>
+              <button type="button" @click="stopUpdates" class="loginbtn loginbtn--shadow">部屋を削除する</button>
+            </div>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
 </template>
 
 
@@ -141,6 +155,18 @@ onBeforeUnmount(() => {
 }
 
 .loginbtn--shadow {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+.copy-btn {
+  size: 1px;
+  background-color: #007bff;
+  color: white;
+  padding: 1px 1px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+.copy-btn--shadow {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 }
 </style>
