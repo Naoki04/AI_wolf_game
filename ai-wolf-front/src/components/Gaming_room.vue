@@ -113,7 +113,7 @@ const onStart = async () => {
     // レスポンスデータから必要な情報を抽出
     // 以下は例です。実際のデータ構造に合わせて変更してください。
     console.log("ゲーム開始")
-    Hacked.value = response.data['Hacked'];
+    Hacked.value = response.data['hacked'];
     console.log('Hackedリスト:', Hacked.value);
     console.log("Hackedされた人は", N_hacked.value)  
   }
@@ -289,7 +289,7 @@ function addMessage(message) {
 }
 
 // 何らかのイベントや関数でchatListに新しいメッセージを追加する
-addMessage('質問を投稿してください。');
+addMessage("メンバーがそろいました。オーナーはゲーム開始ボタンを押してください");
 console.log("chatListの中身:", chatList)
 let count = ref(1)
 const answerList = reactive([
@@ -320,12 +320,12 @@ const addAnswer = (questionIndex, username, answer) => {
     console.error(`質問 ${questionIndex} が定義されていません。`);
   }
 };
-addAnswer(0, "user3", "回答6");
-console.log("answerListの中身:", answerList)
-console.log("answerList[0].answersの中身:", answerList[0].answers)
-console.log("answerList[0].answers[0]の中身:", answerList[0].answers[0])
-console.log("answerList[0].answers[0][0]の中身:", answerList[0].answers[0][0])
-console.log("answerList[0].answers[0][1]の中身:", answerList[0].answers[0][1])
+
+addAnswer(0, "user3", "回答3");
+addAnswer(0, "user4", "回答4");
+addAnswer(0, "user5", "回答5");
+addAnswer(0, "user6", "回答6");
+console.log("answerListの中身:", answerList);
 </script>
 
 <template>
@@ -376,47 +376,45 @@ console.log("answerList[0].answers[0][1]の中身:", answerList[0].answers[0][1]
       </v-container>
     </v-navigation-drawer>
     <!-- 上側のブロック（5人以下）-->
-    <v-row v-if="Current_mem<=5" class="fill-height">
+    <v-row v-if="Current_mem<=5" class="fill-height1">
       <v-col cols="12" class="top-block">
         <!--ユーザーの解答をそれぞれ表示する-->
-        <div v-for="(answer, index) in answerList" :key="index">
-          <div class="chatitem" :class="{ 'my-message': answer[0] === User_input_username, 'other-message': answer[0] !== User_input_username }">
-            <p>{{ answerList[0].answers[0][0] }}さんの回答   :   {{ answerList[0].answers[0][1] }}</p>
+        <div v-for="(question, questionIndex) in answerList" :key="questionIndex">
+          <h2>{{ question.question }}</h2>
+          <div v-for="(answer, answerIndex) in question.answers" :key="answerIndex">
+            <p class="user-answer">{{ answer[0] }}さんの回答：{{ answer[1] }}</p>
           </div>
         </div>
       </v-col>
     </v-row>
     <!--  6人以上　-->
-    <v-row v-if="Current_mem>5" class="fill-height">
-      <v-col cols="6" class="top-block">
-        <div class="left-block mx-auto my-5 px-4">
+    <v-row v-if="Current_mem>5" class="fill-height2">
+      <v-col cols="6" class="left-block mx-auto my-5 px-4">
+        <div class="chat-container">
           <!-- 左側のコンテンツをここに配置 -->
-          <div>
-            <div v-for="(answer, index) in answerList" :key="index">
-            <div class="chatitem" :class="{ 'my-message': answer[0] === User_input_username, 'other-message': answer[0] !== User_input_username }">
-              <p>{{ answerList[0].answers[0][0] }}さんの回答</p>
-              <p>{{ answerList[0].answers[0][1] }}</p>
+          <div v-for="(question, questionIndex) in answerList" :key="questionIndex">
+            <h2>{{ question.question }}</h2>
+            <div v-for="(answer, answerIndex) in question.answers" :key="answerIndex">
+              <p class="user-answer">{{ answer[0] }}さんの回答：{{ answer[1] }}</p>
             </div>
-          </div>
           </div>
         </div>
       </v-col>
       <!-- 右側のブロック -->
-      <v-col cols="6">
-        <div class="right-block mx-auto my-5 px-4">
-          <div>
-            <div v-for="(answer, index) in answerList" :key="index">
-            <div class="chatitem" :class="{ 'my-message': answer[0] === User_input_username, 'other-message': answer[0] !== User_input_username }">
-              <p>{{ answerList[0].answers[0][0] }}さんの回答</p>
-              <p>{{ answerList[0].answers[0][1] }}</p>
+      <v-col cols="6" class="right-block mx-auto my-5 px-4">
+        <div class="chat-container">
+          <!-- 右側のコンテンツをここに配置 -->
+          <div v-for="(question, questionIndex) in answerList" :key="questionIndex">
+            <h2>{{ question.question }}</h2>
+            <div v-for="(answer, answerIndex) in question.answers" :key="answerIndex">
+              <p class="user-answer">{{ answer[4] }}さんの回答：{{ answer[1] }}</p>
             </div>
-          </div>
           </div>
         </div>
       </v-col>
     </v-row>
     <!-- 下側のブロック -->
-    <v-row class="fill-height">
+    <v-row class="fill-height3">
       <v-col cols="12" class="bottom-block">
         <!-- 下側のコンテンツをここに配置 -->
         <div class="mx-auto my-5 px-4">
@@ -456,22 +454,58 @@ body, html {
   padding: 0; /* パディングをリセットして余白を削除 */
   overflow: hidden; /* スクロールを無効にする */
 }
-
-.fill-height {
-  height: 100%; /* ページ全体の高さを100%に設定 */
+.fill-height1 {
+  margin: 100px;
+  height: 180%;
   display: flex;
-  flex-direction: column; /* 子要素を縦方向に並べる */
+  flex-direction: column;
+  margin-bottom: 165px;
 }
-.top-block {
-  margin: 80px 0px 0px 0px;
-  height: 100vh; /* 画面の高さいっぱいにブロックを広げる */
-  background-color: #f0f0f0; /* 上側のブロックの背景色 */
-  flex: 1 1 30%; /* 上側のブロックが残りの高さを占める */
-  padding: 0px;
-  border: 80px solid #ccc;
+.fill-height2 {
+  margin: 100px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 165px;
+}
+.fill-height3 {
+  margin: 100px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.left-block {
+  /*flex: 1;*/
+  background-color: #f0f0f0;
+  padding: 20px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+  margin-right: 10px; /* 左右のブロックを分けるスペース */
+}
+
+.right-block {
+  /*flex: 1;*/
+  background-color: #f0f0f0;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+  margin-left: 10px; /* 左右のブロックを分けるスペース */
+}
+
+.top-block {
+  background-color: #f0f0f0; /* 上側のブロックの背景色 */
+  flex: 1; /* 上側のブロックが残りの高さを占める */
+  padding: 50px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: auto; /* コンテンツがはみ出した場合にスクロールバーを表示 */
+  /*上の空白をなくす*/
+  margin-top: 100px;
 }
 
 .bottom-block {
@@ -483,19 +517,10 @@ body, html {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: auto; /* コンテンツがはみ出した場合にスクロールバーを表示 */
   /*下の空白をなくす*/
-  margin-bottom: 100px;
-}
-.left-block {
-  height: 100vh; /* 画面の高さいっぱいにブロックを広げる */
-  background-color: #f0f0f0; /* 左側のブロックの背景色 */
-  padding: 70px;
+  margin-top: -300px; /* ここのサイズをかなりいじった。 */
+  margin-bottom: 10px;
 }
 
-.right-block {
-  height: 100vh; /* 画面の高さいっぱいにブロックを広げる */
-  background-color: #f0f0f0; /* 右側のブロックの背景色 */
-  padding: 70px;
-}
 .v-app-bar {
   background-color: #02194e;
   color: #ffffff;
@@ -513,12 +538,10 @@ body, html {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
 }
-
 .room-info-title {
   font-size: 24px;
   margin-bottom: 10px;
 }
-
 .room-info {
   margin-bottom: 20px;
   font-family: Arial, sans-serif;
@@ -618,9 +641,12 @@ body, html {
   margin-right: 8px;
   
 }
-
 .link {
   text-decoration: none;
+}
+
+.chat-container {
+  margin-bottom: 100px;
 }
 
 .chatitem {
@@ -629,18 +655,25 @@ body, html {
   padding: 10px;
   border-radius: 5px;
   margin: 10px 0;
-  /*background-color: #f9f9f9;*/
+  background-color: #f9f9f9;
   word-wrap: break-word;
 }
 
+.user-answer {
+  font-size: 16px;
+  margin: 5px 0;
+  font-weight: bold;
+  border: 1px solid #000; /* 縁取りのスタイルを設定 */
+  padding: 10px; /* テキストと縁取りの間に余白を作成 */
+  border-radius: 5px; /* 縁取りの角を丸くする場合に設定 */
+  background-color: #f0f0f0;
+}
 .my-message {
   border: 3px solid #3498db;
 }
-
 .other-message {
   background-color: #3f3d3d
 }
-
 .room-buttons {
   display: flex;
   margin-top: 20px;
