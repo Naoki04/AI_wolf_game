@@ -90,7 +90,7 @@ const writeToClipboard = (text) => {
 </script>
 
 <template>
-  <v-app>
+  <v-app class="black-background">
     <v-container fluid>
       <v-row>
         <v-col cols="6">
@@ -135,6 +135,15 @@ const writeToClipboard = (text) => {
 
 
 <style scoped>
+.black-background {
+  background-color: black;
+  color: white;
+  height: 100vh;
+  width: 100vw;
+  /*display: flex;
+  justify-content: center;
+  align-items: center;*/
+}
 .header {
   font-size: 24px;
 }

@@ -1,5 +1,7 @@
 body {
   padding: 2em;
+  /*背景を全部黒くしたい*/
+  background-color: #000000;
 }
 
 .button-normal {
@@ -8,8 +10,6 @@ body {
   border-radius: 4px;
   padding: 4px;
 }
-
-
 
 /* 以下ログインページ追加分 */
 
