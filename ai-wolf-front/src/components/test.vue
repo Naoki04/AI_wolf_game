@@ -155,7 +155,7 @@ const onQuestion = () => {
   console.log("onQuestionのmessageData", messageData)
   // メッセージをサーバーに送信
   socket.emit("publishEvent", messageData);
-  onGetAiAnswer(Hacked.value, messageData["text"]);
+  //onGetAiAnswer(Hacked.value, messageData["text"]);
   // 入力フィールドをクリア
   chatContent.value = "";
 };
@@ -797,3 +797,54 @@ body, html {
   background-color: #f9f9f9;
 }
 </style>
+
+
+<!--<template>
+  <v-app>
+    <v-container>
+      <v-row>
+        <v-col cols="12" md="6">
+          <v-card>
+            <v-card-title>
+              <h1>ゲームルーム</h1>
+            </v-card-title>
+            <v-card-text>
+              <p>ルームID: {{ roomID }}</p>
+              <p v-if="Owner_input_username">オーナー: {{ Owner_input_username }}</p>
+              <p v-if="User_input_username">ユーザー: {{ User_input_username }}</p>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-card>
+            <v-card-title>
+              <h1>チャット</h1>
+            </v-card-title>
+            <v-card-text>
+              <v-list>
+                <v-list-item v-for="message in messages" :key="message.id">
+                  <v-list-item-content>
+                    <v-list-item-title>{{ message.text }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+            <v-card-actions>
+              ボタンを押すとonAnswer関数が実行されて
+              <textarea variant="outlined" placeholder="回答or質問を入力してください" rows="2" class="area" v-model="chatContent"></textarea>
+              <button class="button-normal button-content" @click="onSend">回答</button>
+            </v-card-actions>
+            <div class="mt-5" v-if="chatList.length !== 0">
+              <ul>
+                <li class="chatitem" v-for="(chat, i) in chatList" :key="i"
+                  :class="{ 'my-message': chat.userName === userName }">
+                  {{ chat.userName }}さん：{{ chat.content }}
+                </li>
+              </ul>
+            </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
+</template>-->

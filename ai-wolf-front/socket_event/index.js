@@ -1,15 +1,3 @@
-// InRoomMessageList = {room1: [Message...], room2:[Message...]};
-const InRoomMessageList = {};
-
-// GlobalMessageList = [Message...];
-const GlobalMessageList = [];
-
-// receiverUserIdに送られた、sendUserIdごとの辞書
-// 初めて送られたときに、userIdに対応するキーを作成する。
-// 2回目以降のDMは、排列の末尾に追加する。
-// DirectMessageList = {user1: {user2: [Message...], user3: [Message...]}, user2: {user1: [Message...]}};
-const DirectMessageList = {};
-
 export default (io, socket) => {
   // 入室メッセージをクライアントに送信する
   socket.on("enterEvent", data => {
@@ -26,12 +14,11 @@ export default (io, socket) => {
     io.sockets.emit("publishEvent", data);
   });
 
-  //roomIDに対応するメッセージリストを返す
-  socket.on("getRoomMessageList", data => {
-    socket.emit("getRoomMessageList", InRoomMessageList[data.roomId]);
+  socket.on("publishChat", data => {
+    io.sockets.emit("publishChat", data);
   });
-  //roomIDに対応するメッセージリストを返す
-  socket.on("getGlobalMessageList", data => {
-    socket.emit("getGlobalMessageList", GlobalMessageList);
+
+  socket.on("publishQuestion", data => {
+    io.sockets.emit("publishQuestion", data);
   });
 };
