@@ -28,5 +28,10 @@ This is an AI assigned-conversational game for 3~8 players. Developped for a Mon
      - 結果発表
          - 人間チーム
          - AIチーム
-         
             ⇒　3に戻る
+## 11/4 ポイント
+ - RakusTechLabのコードを読み込む
+ - chaGPTのAPI呼び出しについて再考する API呼び出し
+ - ユーザーのクリックの流れまで文字起こしする
+ - HTMLにおけるVisibleを調べておく
+ - https://github.com/Naoki04/AI_wolf_game/blob/dev/lambda/documentation.md

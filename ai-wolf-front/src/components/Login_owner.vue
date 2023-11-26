@@ -3,7 +3,6 @@ import { inject, ref } from "vue";
 //import { defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import axios from 'axios';
-
 const router = useRouter();
 //ここで入力 Login_owner.vue
 const Owner_input_username = inject("Owner_input_username");
@@ -11,22 +10,15 @@ const n_mem = inject("n_mem");
 const n_hacked = inject("n_hacked");
 const emit = defineEmits();
 
-//const data = 11112;
-//const submitOya = () => {
-//  emit('close', data);
-//};
-
 // 入室管理
 const onEnter_owner = async () => {
   let response; // response を外部で宣言
-
   console.log(Owner_input_username.value);
   // ユーザー名が入力されているかチェック
   if (Owner_input_username.value.trim().replace("　","") === ""){
     window.alert("ニックネームを入力してください");
     return;
   };
-
   try {
     const data = {
       mode: 'create_room',
@@ -56,12 +48,9 @@ const onEnter_owner = async () => {
   if (response) {
     // roomIDを6桁の数字を用いてランダムに発行
     const Issued_roomID = response.data['roomid'];
-    //console.log('ルームID:', Issued_roomID);
     // passwordも同様に発行
     const Issued_password = response.data['password']
     //console.log('パスワード:', Issued_password);
-    // 待合室に移動
-
     const data = {
       "Issued_roomID": Issued_roomID,
       "Issued_password": Issued_password,
@@ -70,11 +59,11 @@ const onEnter_owner = async () => {
     //camelCaseは禁止。issuedは小文字じゃないとだめ。issued_room_idはOK
     //camelCaseとは…　先頭の文字が小文字, 2つ目以降の単語の頭文字は大文字<=>snake_case
     emit('issued', data);
+    // 待合室に移動
     router.push({ name: "waiting_owner", params: { roomID: Issued_roomID } });
   };
 };
 </script>
-
 
 <template>
   <div class="mx-auto my-5 px-4">
@@ -84,18 +73,24 @@ const onEnter_owner = async () => {
       <input type="text" class="namearea" v-model="Owner_input_username" />
     </div>
     <div>
-        <p>参加人数(3~10)</p>
-        <input type="number" class="namearea" min="3" max="10" v-model="n_mem" />
+      <p>参加人数(3~10)</p>
+      <input type="number" class="namearea" min="3" max="10" v-model="n_mem" />
     </div>
     <div>
-        <p>ハックされた人数(推奨2人)</p>
-        <input type="number" class="namearea" min="1" max="4" v-model="n_hacked"/>
+      <p>ハックされた人数(推奨2人)</p>
+      <input type="number" class="namearea" min="1" max="4" v-model="n_hacked"/>
     </div>
     <button type="button" @click="onEnter_owner" class="loginbtn loginbtn--shadow">ルームを作成</button>
   </div>
 </template>
 
 <style scoped>
+/*真っ黒の背景に白い文字を表示 */
+.black-background {
+  background-color: #000;
+  color: #fff;
+}
+
 .header {
   font-size: 24px;
 }

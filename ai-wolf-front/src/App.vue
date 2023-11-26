@@ -47,4 +47,9 @@
 
 
 <style scoped>
+/*基本、背景をすべて黒くしたい */
+.black-background {
+  background-color: black;
+  color: white;
+}
 </style>

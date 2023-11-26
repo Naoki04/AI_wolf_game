@@ -121,6 +121,7 @@ onBeforeUnmount(() => {
 
 
 <template>
+<div class="black-background">
   <div class="mx-auto my-5 px-4">
     <p class="text-h3 font-weight-medium">オーナーがゲームを開始するまで少々お待ちください。</p>
   </div>
@@ -131,10 +132,20 @@ onBeforeUnmount(() => {
   <div>
     <button type="button" @click="stopUpdates" class="loginbtn loginbtn--shadow">更新停止</button>
   </div>
-  
+</div>
 </template>
 
 <style scoped>
+.black-background {
+  background-color: black;
+  color: white;
+  height: 100vh;
+  width: 100vw;
+  /*display: flex;
+  justify-content: center;
+  align-items: center;*/
+}
+
 
 .header {
   font-size: 24px;

@@ -1,5 +1,7 @@
 body {
   padding: 2em;
+  /*背景を全部紺色にしたい*/
+  background-color: #0b1f22;
 }
 
 .button-normal {
@@ -8,8 +10,6 @@ body {
   border-radius: 4px;
   padding: 4px;
 }
-
-
 
 /* 以下ログインページ追加分 */
 
