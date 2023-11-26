@@ -416,7 +416,7 @@ const registerSocketEvent = () => {
               </span>
             </p>
           </div>
-          <button class="update-button" @click="updateInformation">情報を更新</button>
+          <button class="update-button" @click="onInformation">情報を更新</button>
         </div>
         <div class="button-container">
           <button v-if="Owner_input_username !== ''" class="button-normal button-side-bar" @click="onClose">部屋を閉じる</button>

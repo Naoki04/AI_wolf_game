@@ -6,6 +6,27 @@ import { useRouter } from "vue-router";
 import axios from 'axios';
 const router = useRouter();
 
+//ヘッダー
+const isRoomInfoDrawerOpen = ref(false);
+const isMemoDrawerOpen = ref(false);
+
+// 左ヘッダー・ルーム情報
+const roomID = inject("roomID");
+const password = inject("password");
+const Members = ref([]);
+const N_mem = ref(0);
+const N_hacked = ref(0);
+const Dead = ref([]);
+
+// 右ヘッダー・メモ
+const memoList = ref([]);
+const addMemo = (memo) => {
+  memoList.value.push(memo);
+};
+
+
+
+// ルーム情報
 const Owner_input_username = inject("Owner_input_username");
 const User_input_username = inject("User_input_username");
 const userName = computed(() => {
@@ -17,8 +38,8 @@ const userName = computed(() => {
     return null;
   }
 });
-const roomID = inject("roomID");
-const N_mem = ref(0);
+
+
 
 const onInformation = async () => {
   try {
@@ -37,9 +58,10 @@ const onInformation = async () => {
     });
     console.log("onInfomationのステータスコード", response.status);
     console.log("onInfomationのレスポンスデータ", response.data);
+    Members.value = response.data.room_info.Members;
     N_mem.value = response.data.room_info.N_mem;
-    console.log("onInfomationのN_mem:", N_mem.value);
-    console.log("onInfomationのHackeds:", response.data.room_info.Hacked);
+    N_hacked.value = response.data.room_info.N_hacked;
+    Dead.value = response.data.room_info.Dead;
     return response.data;
   } catch (error) {
     console.error(error);
@@ -75,7 +97,7 @@ const onStart = async (OnInfo) => {
 
 const socket = io();
 const onReceiveMessage = (messageData) => {
-  chatList.value.unshift(messageData);
+  answerList.value.unshift(messageData);
 };
 const onReceiveQuestion = (questionData) => {
   questionList.value.unshift(questionData);
@@ -84,9 +106,8 @@ socket.on("publishChat", onReceiveMessage);
 socket.on("publishQuestion", onReceiveQuestion);
 
 const questionList = ref([]);
-const chatList = ref([]);
+const answerList = ref([]);
 const chatContent = ref("");
-
 
 const onQuestion = () => {
   if (chatContent.value.trim().replace("　", "") === ""){
@@ -98,7 +119,7 @@ const onQuestion = () => {
   const messageData = message.getMessageObject();
   socket.emit("publishQuestion", messageData); // チャット用のイベントを送信
   chatContent.value = "";
-  console.log("onQuestionのchatList", chatList.value);
+  console.log("onQuestionのanswerList", answerList.value);
   console.log("onQuestionのquestionList", questionList.value);
 };
 
@@ -128,7 +149,7 @@ const onAnswer = async () => {
     console.log("onAnswerのmessageData", messageData)
     socket.emit("publishChat", messageData); 
   };
-  console.log("onAnswerのchatList", chatList);
+  console.log("onAnswerのanswerList", answerList);
   chatContent.value = "";
 };
 
@@ -187,9 +208,73 @@ onMounted(async () => {
   console.log("N_mem:", N_mem.value);
 });
 
+
+//
+
 </script>
+
 <template>
   <v-app>
+    <!--　ヘッダー　-->
+    <v-app-bar color="primary" dark app clipped-left>
+      <v-app-bar-nav-icon variant="text" @click.stop="isRoomInfoDrawerOpen = !isRoomInfoDrawerOpen"
+        icon="mdi-menu"></v-app-bar-nav-icon>
+      <!-- 写真を挿入<v-img src="../assets/logo.png" max-height="48px" contain></v-img> -->
+      <v-toolbar-title>AI狼</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn prepend-icon="mdi-note-edit" size="large" @click.stop="isMemoDrawerOpen = !isMemoDrawerOpen">Memo</v-btn>
+    </v-app-bar>
+    <!--　ルーム情報　-->
+    <v-navigation-drawer app v-model="isRoomInfoDrawerOpen" clipped location="left">
+      <v-container>
+        <div class="room-info-container">
+          <h1 class="room-info-title">ルーム情報</h1>
+          <div class="room-info">
+            <p class="room-info-item">参加人数: {{ N_mem }}</p>
+            <p class="room-info-item">Hackedの人数: {{ N_hacked }}</p>
+            <p class="room-info-item">参加者リスト: 
+              <br>
+              <span v-for="member in Members" :key="member">{{ member }}
+                <br>
+              </span>
+            </p>
+            <v-spacer></v-spacer>
+            <p class="room-info-item">死亡者リスト: 
+              <br>
+              <span v-for="dead in Dead" :key="dead">
+                {{ dead }}さん
+                <br>
+              </span>
+            </p>
+          </div>
+          <button class="update-button" @click="updateInformation">情報を更新</button>
+        </div>
+        <div class="button-container">
+          <button v-if="Owner_input_username !== ''" class="button-normal button-side-bar" @click="onClose">部屋を閉じる</button>
+          <button v-else class="button-normal button-side-bar" @click="onExit">退室する</button>
+        </div>
+      </v-container>
+    </v-navigation-drawer>
+    <!--　メモ　-->
+    <v-navigation-drawer app v-model="isMemoDrawerOpen" clipped location="right">
+      <v-container>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title class="title grey--text text--darken">あなたの残したメモ</v-list-item-title>
+            <v-spacer></v-spacer>
+          </v-list-item-content>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item v-for="memo in memoList" :key="memo">
+          <v-list-item-content>
+            <v-list-item-title>{{ memo }}</v-list-item-title>
+            <v-spacer></v-spacer>
+            <v-divider></v-divider>
+          </v-list-item-content>
+        </v-list-item>
+      </v-container>
+    </v-navigation-drawer>
+    <!--　ゲームコンテント　-->
     <v-container>
       <v-row>
         <v-col cols="12" md="6">
@@ -215,8 +300,8 @@ onMounted(async () => {
               <v-btn color="primary" @click="onAnswer">◀回答</v-btn>
             </v-card-actions>
             <v-card-text>
-              <v-list v-if="chatList.length % N_mem === 0 && chatList.length > 0 ">
-                <v-list-item v-for="(chat, i) in chatList.slice(0, N_mem)" :key="i">
+              <v-list v-if="answerList.length % N_mem === 0 && answerList.length > 0 ">
+                <v-list-item v-for="(chat, i) in answerList.slice(0, N_mem)" :key="i">
                   <v-list-item-content>
                     <li>{{ chat.userName }}さんの回答：{{ chat.content }}</li>
                   </v-list-item-content>
@@ -335,24 +420,103 @@ onMounted(async () => {
 .v-btn__content {
   color: black;
 }
+.v-app-bar {
+  background-color: #02194e;
+  color: #ffffff;
+}
+.header-right{
+  position: absolute;
+  right: 20px;
+  font-size: 16px;
+  font-weight: bold;
+}
+/* 左ヘッダー：room-info */
+.room-info-container {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+.room-info-title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.room-info {
+  margin-bottom: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: left; /* すべての内容を左寄せに */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
+.room-info-item {
+  font-size: 16px;
+  margin: 5px 0;
+}
+.update-button {
+  background-color: #02194e;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #0056b3;
+}
+
+.button-container {
+  position: fixed;
+  bottom: 0;
+  width: 88%;
+  text-align: center; /* ボタンを横方向に中央に配置 */
+}
+.button-normal {
+  background-color: #02194e;
+  text-align: center; /* ボタンを横方向に中央に配置 */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  outline: none;
+}
+/* ボタンを一番下に配置したい*/
+.button-side-bar {
+  background-color: #02194e;
+  text-align: center; /* ボタンを横方向に中央に配置 */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  text-align: center;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  outline: none;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.button-content {
+  background-color: #02194e;
+  text-align: center; /* ボタンを横方向に中央に配置 */
+  color: white;
+  padding: 2px 5px;
+  font-size: 16px;
+  border-radius: 5px;
+  outline: none;
+  width: 80%;
+  margin-bottom: 5px;
+}
 
 /*ここから新規*/
 
 
 </style>
-
-<!--<template>
-  <v-card-text>
-    <v-list>
-      <v-list-item v-for="(chat, i) in chatList" :key="i">
-        <v-list-item-content>
-          <li>{{ chat.userName }}さん：{{ chat.content }}:{{ i }}</li>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item v-if="chatList.length === /* 期待する人数 */">
-         ここで全ての回答が集まった時に表示する内容を記述 
-      </v-list-item>
-    </v-list>
-  </v-card-text>
-</template>-->
