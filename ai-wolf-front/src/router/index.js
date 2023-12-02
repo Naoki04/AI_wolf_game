@@ -6,6 +6,7 @@ import Gaming_room from "../components/Gaming_room.vue"
 import Waiting_user from "../components/Waiting_user.vue"
 import Waiting_owner from "../components/Waiting_owner.vue"
 import test from "../components/test.vue"
+import testtest from "../components/testtest.vue"
 
 const router = createRouter({
   history: createWebHistory(),
@@ -18,8 +19,11 @@ const router = createRouter({
       path: "/test/",
       name: "test",
       component: test
-    },
-    {
+    },{
+      path: "/testtest/",
+      name: "testtest",
+      component: testtest
+    },{
       path: "/login_owner/",
       name: "login_owner",
       component: Login_owner
